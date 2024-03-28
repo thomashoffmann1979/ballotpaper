@@ -1,0 +1,112 @@
+package main
+
+import (
+	// "fmt"
+	// "image"
+	"gocv.io/x/gocv"
+)
+
+
+
+func extractPaper(img gocv.Mat, maxContour gocv.PointVector, resultWidth int, resultHeight int, cornerPoints map[string]gocv.Point) gocv.Mat {
+
+	
+	topLeftCorner := cornerPoints["topLeftCorner"]
+	topRightCorner := cornerPoints["topRightCorner"]
+	bottomLeftCorner := cornerPoints["bottomLeftCorner"]
+	bottomRightCorner := cornerPoints["bottomRightCorner"]
+	warpedDst := gocv.NewMat()
+
+	if topLeftCorner != (gocv.Point{}) && topRightCorner != (gocv.Point{}) && bottomLeftCorner != (gocv.Point{}) && bottomRightCorner != (gocv.Point{}) {
+		dsize := image.Point{resultWidth, resultHeight}
+		srcTri := gocv.NewMatWithSize(4, 1, gocv.MatTypeCV32FC2)
+		srcTri.SetFloatAt(0, 0, float32(topLeftCorner.X))
+		srcTri.SetFloatAt(1, 0, float32(topLeftCorner.Y))
+		srcTri.SetFloatAt(2, 0, float32(topRightCorner.X))
+		srcTri.SetFloatAt(3, 0, float32(topRightCorner.Y))
+		srcTri.SetFloatAt(4, 0, float32(bottomLeftCorner.X))
+		srcTri.SetFloatAt(5, 0, float32(bottomLeftCorner.Y))
+		srcTri.SetFloatAt(6, 0, float32(bottomRightCorner.X))
+		srcTri.SetFloatAt(7, 0, float32(bottomRightCorner.Y))
+
+		dstTri := gocv.NewMatWithSize(4, 1, gocv.MatTypeCV32FC2)
+		dstTri.SetFloatAt(0, 0, 0)
+		dstTri.SetFloatAt(1, 0, 0)
+		dstTri.SetFloatAt(2, 0, float32(resultWidth))
+		dstTri.SetFloatAt(3, 0, 0)
+		dstTri.SetFloatAt(4, 0, 0)
+		dstTri.SetFloatAt(5, 0, float32(resultHeight))
+		dstTri.SetFloatAt(6, 0, float32(resultWidth))
+		dstTri.SetFloatAt(7, 0, float32(resultHeight))
+
+		M := gocv.GetPerspectiveTransform(srcTri, dstTri)
+		gocv.WarpPerspective(img, &warpedDst, M, dsize, gocv.InterpolationLinear, gocv.BorderConstant, gocv.NewScalar())
+	}
+
+	window := gocv.NewWindow("extractPaper warpedDst")
+	window.IMShow(warpedDst)
+
+	return warpedDst
+}
+/*
+extractPaper: function(img,maxContour, resultWidth, resultHeight, cornerPoints) {
+
+
+      
+            const {
+              topLeftCorner,
+              topRightCorner,
+              bottomLeftCorner,
+              bottomRightCorner,
+            } = cornerPoints || this.getCornerPoints(maxContour, img);
+            let warpedDst = new cv.Mat();
+     
+            if (
+              
+              topLeftCorner && 
+              topRightCorner && 
+              bottomLeftCorner && 
+              bottomRightCorner
+              
+              ){
+                let dsize = new cv.Size(resultWidth, resultHeight);
+                let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                topLeftCorner.x,
+                topLeftCorner.y,
+                topRightCorner.x,
+                topRightCorner.y,
+                bottomLeftCorner.x,
+                bottomLeftCorner.y,
+                bottomRightCorner.x,
+                bottomRightCorner.y,
+                ]);
+        
+                let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                0,
+                0,
+                resultWidth,
+                0,
+                0,
+                resultHeight,
+                resultWidth,
+                resultHeight,
+                ]);
+        
+                let M = cv.getPerspectiveTransform(srcTri, dstTri);
+                cv.warpPerspective(
+                img,
+                warpedDst,
+                M,
+                dsize,
+                cv.INTER_LINEAR,
+                cv.BORDER_CONSTANT,
+                new cv.Scalar()
+                );
+            }
+            //cv.imshow(canvas, warpedDst);
+      
+            //img.delete()
+            //warpedDst.delete()
+            return warpedDst;
+          },
+*/
