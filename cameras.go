@@ -7,7 +7,7 @@ import (
 )
 
 func cameras() {
-	fmt.Println("cameras noting don yet here.")
+	
 	webcam, err := gocv.VideoCaptureDevice(0)
 	if err != nil {
 		fmt.Println("Error opening capture device: ", 0)
@@ -23,10 +23,14 @@ func cameras() {
 		rotated := gocv.NewMat()
 		gocv.Rotate(img, &rotated, gocv.Rotate90CounterClockwise)
 		contour := findPaperContour(rotated)
-		fmt.Println("contours: ", contour.Size())
+		// fmt.Println("contours: ", contour.Size())
 
 		cornerPoints := getCornerPoints(contour)
-		fmt.Println("cornerPoints: ", cornerPoints)
+		// fmt.Println("cornerPoints: ", cornerPoints)
+
+		// gocv.Rectangle(&rook, image.Rect(cornerPoints.topLeftCorner, bottomRightCorner), color.RGBA{255, 255, 0, 0}, -1)
+
+		extractPaper(rotated, contour, 500, 700, cornerPoints)
 
 		drawContours := gocv.NewPointsVector()
 		defer drawContours.Close()

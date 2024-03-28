@@ -2,13 +2,13 @@ package main
 
 import (
 	// "fmt"
-	// "image"
+	"image"
 	"gocv.io/x/gocv"
 )
 
 
 
-func extractPaper(img gocv.Mat, maxContour gocv.PointVector, resultWidth int, resultHeight int, cornerPoints map[string]gocv.Point) gocv.Mat {
+func extractPaper(img gocv.Mat, maxContour gocv.PointVector, resultWidth int, resultHeight int, cornerPoints map[string]image.Point) gocv.Mat {
 
 	
 	topLeftCorner := cornerPoints["topLeftCorner"]
@@ -16,31 +16,30 @@ func extractPaper(img gocv.Mat, maxContour gocv.PointVector, resultWidth int, re
 	bottomLeftCorner := cornerPoints["bottomLeftCorner"]
 	bottomRightCorner := cornerPoints["bottomRightCorner"]
 	warpedDst := gocv.NewMat()
+  defer warpedDst.Close()
 
-	if topLeftCorner != (gocv.Point{}) && topRightCorner != (gocv.Point{}) && bottomLeftCorner != (gocv.Point{}) && bottomRightCorner != (gocv.Point{}) {
+	if topLeftCorner != (image.Point{}) && topRightCorner != (image.Point{}) && bottomLeftCorner != (image.Point{}) && bottomRightCorner != (image.Point{}) {
 		dsize := image.Point{resultWidth, resultHeight}
-		srcTri := gocv.NewMatWithSize(4, 1, gocv.MatTypeCV32FC2)
-		srcTri.SetFloatAt(0, 0, float32(topLeftCorner.X))
-		srcTri.SetFloatAt(1, 0, float32(topLeftCorner.Y))
-		srcTri.SetFloatAt(2, 0, float32(topRightCorner.X))
-		srcTri.SetFloatAt(3, 0, float32(topRightCorner.Y))
-		srcTri.SetFloatAt(4, 0, float32(bottomLeftCorner.X))
-		srcTri.SetFloatAt(5, 0, float32(bottomLeftCorner.Y))
-		srcTri.SetFloatAt(6, 0, float32(bottomRightCorner.X))
-		srcTri.SetFloatAt(7, 0, float32(bottomRightCorner.Y))
 
-		dstTri := gocv.NewMatWithSize(4, 1, gocv.MatTypeCV32FC2)
-		dstTri.SetFloatAt(0, 0, 0)
-		dstTri.SetFloatAt(1, 0, 0)
-		dstTri.SetFloatAt(2, 0, float32(resultWidth))
-		dstTri.SetFloatAt(3, 0, 0)
-		dstTri.SetFloatAt(4, 0, 0)
-		dstTri.SetFloatAt(5, 0, float32(resultHeight))
-		dstTri.SetFloatAt(6, 0, float32(resultWidth))
-		dstTri.SetFloatAt(7, 0, float32(resultHeight))
 
-		M := gocv.GetPerspectiveTransform(srcTri, dstTri)
-		gocv.WarpPerspective(img, &warpedDst, M, dsize, gocv.InterpolationLinear, gocv.BorderConstant, gocv.NewScalar())
+    newImg := []image.Point{
+      image.Point{0, 0},
+      image.Point{0, resultHeight},
+      image.Point{resultWidth, resultHeight},
+      image.Point{resultWidth, 0},
+    }
+
+    origImg := []image.Point{
+      topLeftCorner, // top-left
+      bottomLeftCorner, // bottom-left
+      bottomRightCorner, // bottom-right
+      topRightCorner,  // top-right
+    }
+
+		M := gocv.GetPerspectiveTransform( gocv.NewPointVectorFromPoints(origImg)  , gocv.NewPointVectorFromPoints(newImg))
+    defer M.Close()
+		gocv.WarpPerspective(img, &warpedDst, M, dsize)
+    // , gocv.InterpolationLinear, gocv.BorderConstant, gocv.NewScalar())
 	}
 
 	window := gocv.NewWindow("extractPaper warpedDst")
