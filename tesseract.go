@@ -53,7 +53,7 @@ func tesseract(img gocv.Mat) (image.Point,string) {
 		fmt.Println(herr)
 		return result,title
 	}else{
-		fmt.Println(out[0].Word)
+		//fmt.Println(out[0].Word)
 
 
 		if out[0].Word == "Einzelhandel" || out[0].Word == "Energie" {

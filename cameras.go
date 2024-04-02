@@ -211,9 +211,9 @@ func cameras(checkMarkList []CheckMarkList, lastTitle string) {
 						outList = append(outList, "🥶")
 					}
 				}						
-
+					if checkMarkList[0].Count>5 {
 				fmt.Println( ballotPaperTitle, outList , checkMarkList[0].Count );
-
+					}
 				lastTitle = ballotPaperTitle
 
 				roiwindow := gocv.NewWindow("roi")
