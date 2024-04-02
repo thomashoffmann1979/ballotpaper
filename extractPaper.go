@@ -16,7 +16,7 @@ func extractPaper(img gocv.Mat, maxContour gocv.PointVector, resultWidth int, re
 	bottomLeftCorner := cornerPoints["bottomLeftCorner"]
 	bottomRightCorner := cornerPoints["bottomRightCorner"]
 	warpedDst := gocv.NewMat()
-  defer warpedDst.Close()
+  //defer warpedDst.Close()
 
 	if topLeftCorner != (image.Point{}) && topRightCorner != (image.Point{}) && bottomLeftCorner != (image.Point{}) && bottomRightCorner != (image.Point{}) {
 		dsize := image.Point{resultWidth, resultHeight}
@@ -42,9 +42,7 @@ func extractPaper(img gocv.Mat, maxContour gocv.PointVector, resultWidth int, re
     // , gocv.InterpolationLinear, gocv.BorderConstant, gocv.NewScalar())
 	}
 
-	window := gocv.NewWindow("extractPaper warpedDst")
-	window.IMShow(warpedDst)
-
+	
 	return warpedDst
 }
 /*

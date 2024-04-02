@@ -23,17 +23,19 @@ func main() {
 	flag.BoolVar(&boolVerbose, "verbose", false, "verbose output")
 	flag.Parse()
 
+	checkMarkList := []CheckMarkList{}
+	lastTitle := ""
 	switch strType {
 		case "camera":
-			cameras()
+			cameras(checkMarkList,lastTitle)
 		case "detect":
 			fmt.Println("detecting image")
 		case "compare":
 			fmt.Println("comparing image")
 		case "help":
 			help()
-		case "tesseract":
-			tesseract()
+		//case "tesseract":
+		//	tesseract()
 		default:
 
 			help()
