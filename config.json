@@ -1,0 +1,27 @@
+[
+    {
+        "titles": [
+            "Einzelhandel",
+            "Energie"
+        ],
+        "titleRegion": {
+            "x": 20,
+            "y": 27,
+            "width": 80,
+            "height": 20
+        },
+        "pagesize": {
+                "width": 210,
+                "height": 297
+        },
+        "circleSize": 5,
+        "rois": [
+            {
+                "x": 10,
+                "y": 39,
+                "width": 20,
+                "height": 198
+            }
+        ]
+    }
+]
