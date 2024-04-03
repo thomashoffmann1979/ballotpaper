@@ -39,9 +39,11 @@ func cameras(template gocv.Mat) {
 	defer img.Close()
 	checkMarkList := []CheckMarkList{}
 	lastTitle := ""
+	lastTesseract := TesseractReturnType{}
+
 	for {
 		webcam.Read(&img)
-		process(img, template, checkMarkList, lastTitle)
+		checkMarkList,lastTitle,lastTesseract = process(img, template, checkMarkList, lastTitle, lastTesseract)
 		window.IMShow(img)
 		window.WaitKey(1)
 	

@@ -67,8 +67,9 @@ func main() {
 			image := gocv.IMRead(strInputFile, gocv.IMReadColor)
 			checkMarkList := []CheckMarkList{}
 			lastTitle := ""
+			lastTesseract := TesseractReturnType{}
 		
-			process(image,template,checkMarkList,lastTitle);
+			process(image,template,checkMarkList,lastTitle,lastTesseract);
 		case "compare":
 			fmt.Println("comparing image")
 		case "help":

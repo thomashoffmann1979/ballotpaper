@@ -2,10 +2,11 @@
     {
         "titles": [
             "Einzelhandel",
-            "Energie"
+            "Energie",
+            "Handelsvertretungen"
         ],
         "titleRegion": {
-            "x": 20,
+            "x": 0,
             "y": 27,
             "width": 80,
             "height": 20
