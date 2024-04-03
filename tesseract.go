@@ -64,7 +64,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 
 		imgColor := gocv.NewMat()
 		gocv.CvtColor(croppedMat, &imgColor, gocv.ColorGrayToBGR)
-		client.SetWhitelist("EinzelhandelEnergie")
+		// client.SetWhitelist("EinzelhandelEnergie")
 		seterror := client.SetImageFromBytes(fileformatBytes(croppedMat))
 		if seterror != nil {
 			fmt.Println(seterror)
@@ -85,6 +85,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 				if boolVerbose {
 					fmt.Printf("The distance between %s and %s is %d %d.\n", out[0].Word, documentConfigurations[i].Titles[j], len( documentConfigurations[i].Titles[j]), distance)
 				}
+				fmt.Printf("The distance between %s and %s is %d %d.\n", out[0].Word, documentConfigurations[i].Titles[j], len( documentConfigurations[i].Titles[j]), distance)
 				if distance < 3 {
 
 					result.Title=documentConfigurations[i].Titles[j]

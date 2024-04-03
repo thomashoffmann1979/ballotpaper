@@ -13,6 +13,7 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 	gocv.CvtColor(croppedMat, &croppedMatGray, gocv.ColorBGRToGray)
 	circles := gocv.NewMat()
 	defer circles.Close()
+	/*
 	gocv.HoughCirclesWithParams(
 		croppedMatGray,
 		&circles,
@@ -23,6 +24,19 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 		10,                    // param2
 		4,                    // minRadius
 		10,                     // maxRadius
+	)
+	*/
+
+	gocv.HoughCirclesWithParams(
+		croppedMatGray,
+		&circles,
+		gocv.HoughGradient,
+		1,                     // dp
+		80, //float64(croppedMatGray.Rows()/50), // minDist
+		90,                    // param1
+		10,                    // param2
+		circleSize,                    // minRadius
+		circleSize+5,                     // maxRadius
 	)
 
 
@@ -35,8 +49,8 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 	// mSize := (circleSize%2) +  circleSize
 	// fmt.Println("mSize: ", mSize)
 
-	gocv.GaussianBlur(imgGray, &imgBlur, image.Point{3, 3}, 0, 0, gocv.BorderDefault)
-	gocv.AdaptiveThreshold(imgBlur, &imgRGray, 255.0, gocv.AdaptiveThresholdGaussian, gocv.ThresholdBinary, 5, 4.0)
+	gocv.GaussianBlur(imgGray, &imgBlur, image.Point{5, 5}, 0, 0, gocv.BorderDefault)
+	gocv.AdaptiveThreshold(imgBlur, &imgRGray, 255.0, gocv.AdaptiveThresholdGaussian, gocv.ThresholdBinary, 7, 4.0)
 	
 	checkMarks := []CheckMarks{}
 	checkMarksList := []bool{}
@@ -59,26 +73,36 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 			// defer rect_circleMat.Close()
 
 
-			color := color.RGBA{255, 255, 255, 0}
-			gocv.Circle(&imgRGray, image.Pt(x, y), r-2, color, 2)
-			gocv.Circle(&imgRGray, image.Pt(x, y), r-1, color, 2)
-			gocv.Circle(&imgRGray, image.Pt(x, y), r, color, 2)
+			_color := color.RGBA{255, 255, 255, 0}
+			
+			gocv.Circle(&imgRGray, image.Pt(x, y), r-2, _color, 4)
+			gocv.Circle(&imgRGray, image.Pt(x, y), r-1, _color, 4)
+			gocv.Circle(&imgRGray, image.Pt(x, y), r, _color, 4)
 
 
-			r+=2
-			gocv.Circle(&imgRGray, image.Pt(x, y), r, color, 2) 
-			r+=2
-			gocv.Circle(&imgRGray, image.Pt(x, y), r, color, 2) 
-			r+=2
-			gocv.Circle(&imgRGray, image.Pt(x, y), r, color, 2) 
-			r+=2
-			gocv.Circle(&imgRGray, image.Pt(x, y), r, color, 2) 
-			r+=2
-			gocv.Circle(&imgRGray, image.Pt(x, y), r, color, 2) 
+			rw:=r
+
+			//_color = color.RGBA{200, 200, 200, 0}
+			rw+=4
+			gocv.Circle(&imgRGray, image.Pt(x, y), rw, _color, 4) 
+			rw+=4
+			gocv.Circle(&imgRGray, image.Pt(x, y), rw, _color, 4) 
+			rw+=4
+			gocv.Circle(&imgRGray, image.Pt(x, y), rw, _color, 4) 
+			rw+=4
+			gocv.Circle(&imgRGray, image.Pt(x, y), rw, _color, 4) 
+			rw+=4
+			gocv.Circle(&imgRGray, image.Pt(x, y), rw, _color, 4) 
+			rw+=4
+			gocv.Circle(&imgRGray, image.Pt(x, y), rw, _color, 4) 
+			rw+=4
+			gocv.Circle(&imgRGray, image.Pt(x, y), rw, _color, 4) 
+			rw+=4
+			gocv.Circle(&imgRGray, image.Pt(x, y), rw, _color, 4) 
 			
 			
 
-			rect_circle:=image.Rect(x-r +1, y-r +1, x+r-1, y+r-1)
+			rect_circle:=image.Rect(x-r , y-r  , x+r , y+r )
 			// fmt.Println("rect_circle: ", rect_circle,imgRGray.Cols(), imgRGray.Rows())
 			if rect_circle.Min.X < 0 || rect_circle.Min.Y < 0 || rect_circle.Max.X > imgRGray.Cols() || rect_circle.Max.Y > imgRGray.Rows() {
 				continue
