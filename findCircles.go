@@ -8,7 +8,7 @@ import (
 	"image/color"
 	"gocv.io/x/gocv"
 )
-func findCircles(croppedMat gocv.Mat , circleSize int) {
+func findCircles(croppedMat gocv.Mat , circleSize int,minDist float64) []bool {
 	croppedMatGray := gocv.NewMat()
 	gocv.CvtColor(croppedMat, &croppedMatGray, gocv.ColorBGRToGray)
 	circles := gocv.NewMat()
@@ -27,6 +27,7 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 	)
 	*/
 
+	/*
 	gocv.HoughCirclesWithParams(
 		croppedMatGray,
 		&circles,
@@ -37,6 +38,20 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 		10,                    // param2
 		circleSize,                    // minRadius
 		circleSize+5,                     // maxRadius
+	)
+*/
+
+
+	gocv.HoughCirclesWithParams(
+		croppedMatGray,
+		&circles,
+		gocv.HoughGradient,
+		1,                     // dp
+		minDist, //float64(croppedMatGray.Rows()/50), // minDist
+		90,                    // param1
+		10,                    // param2
+		circleSize,                    // minRadius
+		circleSize,                     // maxRadius
 	)
 
 
@@ -49,8 +64,8 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 	// mSize := (circleSize%2) +  circleSize
 	// fmt.Println("mSize: ", mSize)
 
-	gocv.GaussianBlur(imgGray, &imgBlur, image.Point{5, 5}, 0, 0, gocv.BorderDefault)
-	gocv.AdaptiveThreshold(imgBlur, &imgRGray, 255.0, gocv.AdaptiveThresholdGaussian, gocv.ThresholdBinary, 7, 4.0)
+	gocv.GaussianBlur(imgGray, &imgBlur, image.Point{9, 9}, 0, 0, gocv.BorderDefault)
+	gocv.AdaptiveThreshold(imgBlur, &imgRGray, 255.0, gocv.AdaptiveThresholdGaussian, gocv.ThresholdBinary, 9, 4.0)
 	
 	checkMarks := []CheckMarks{}
 	checkMarksList := []bool{}
@@ -75,7 +90,7 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 
 			_color := color.RGBA{255, 255, 255, 0}
 			
-			gocv.Circle(&imgRGray, image.Pt(x, y), r-2, _color, 4)
+			gocv.Circle(&imgRGray, image.Pt(x, y), r-3, _color, 6)
 			gocv.Circle(&imgRGray, image.Pt(x, y), r-1, _color, 4)
 			gocv.Circle(&imgRGray, image.Pt(x, y), r, _color, 4)
 
@@ -141,12 +156,18 @@ func findCircles(croppedMat gocv.Mat , circleSize int) {
 		}
 	}
 
-	fmt.Println("checkMarksList: ", checkMarksList)
-	
+	if boolVerbose {
+		fmt.Println("checkMarks: ", checkMarks)
+	}
+	if boolVerbose {
+		fmt.Println("checkMarksList: ", checkMarksList)
+	}
+	// fmt.Println("checkMarksList: ", checkMarksList)
 	// gocv.Threshold(imgGray, &imgRGray, 40, 255, gocv.ThresholdBinary + gocv.ThresholdOtsu)
 			
 
 	findCirclesWindow := gocv.NewWindow("findCircles")
 	findCirclesWindow.IMShow(imgRGray)
 
+	return checkMarksList
 }

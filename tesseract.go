@@ -19,19 +19,27 @@ func fileformatBytes(img gocv.Mat) []byte {
 
 type TesseractReturnType struct {
 	Point    image.Point
+	FCBarcode   string
+	Barcode   string
 	Title   string
+	IsCorrect bool
+	Marks   []bool
 	PageRois []DocumentConfigurationPageRoi
 	Pagesize DocumentConfigurationPageSize
 	CircleSize int
+	CircleMinDistance int
 }
 
 func tesseract(img gocv.Mat) (TesseractReturnType) {
 	result:=TesseractReturnType{}
 	result.Point=image.Point{0,	0}
 	result.Title=""
+	result.IsCorrect=false
 	result.PageRois=[]DocumentConfigurationPageRoi{}
 	result.Pagesize=DocumentConfigurationPageSize{}
 	result.CircleSize=1
+	result.CircleMinDistance=100
+	result.Marks=[]bool{}
 	
 	client := gosseract.NewClient()
 	defer client.Close()
@@ -44,6 +52,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		
 
 		result.CircleSize=documentConfigurations[i].CircleSize
+		result.CircleMinDistance=documentConfigurations[i].CircleMinDistance
 		result.Pagesize=documentConfigurations[i].Pagesize
 		result.PageRois=documentConfigurations[i].Rois
 
@@ -54,6 +63,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		H := documentConfigurations[i].TitleRegion.Height * img.Rows() / result.Pagesize.Height
 
 		croppedMat := img.Region(image.Rect(X, Y, W+X, H+Y))
+		defer croppedMat.Close()
 
 
 		if croppedMat.Empty() {
@@ -75,6 +85,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 			fmt.Println(herr)
 			return result
 		}else{
+			// fmt.Println(out[0].Word)
 			if boolVerbose {
 				fmt.Println(out[0].Word)
 			}
@@ -85,7 +96,6 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 				if boolVerbose {
 					fmt.Printf("The distance between %s and %s is %d %d.\n", out[0].Word, documentConfigurations[i].Titles[j], len( documentConfigurations[i].Titles[j]), distance)
 				}
-				fmt.Printf("The distance between %s and %s is %d %d.\n", out[0].Word, documentConfigurations[i].Titles[j], len( documentConfigurations[i].Titles[j]), distance)
 				if distance < 3 {
 
 					result.Title=documentConfigurations[i].Titles[j]
@@ -100,15 +110,18 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 					drawContours.Append(contour)
 					gocv.DrawContours(&croppedMat, drawContours, -1, color.RGBA{0, 255, 0, 0}, 2)
 
-					result.Point = out[0].Box.Min;
+					// result.Point = out[0].Box.Min
+					result.Point = image.Point{documentConfigurations[i].TitleRegion.X, documentConfigurations[i].TitleRegion.Y}
 			
 					return result
 				}
 
 			}
 
-			croppedwindow := gocv.NewWindow("cropped")
-			croppedwindow.IMShow(croppedMat)
+			if showTesseractCropped {
+				croppedwindow := gocv.NewWindow("cropped")
+				croppedwindow.IMShow(croppedMat)
+			}
 		
 		}
 	}
