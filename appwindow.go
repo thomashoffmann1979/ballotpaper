@@ -42,6 +42,7 @@ var topWindow fyne.Window
 var loginContainer *fyne.Container
 var mainAppContainer fyne.CanvasObject
 var pingResponse api.PingResponse
+var kandidatenResponse api.KandidatenResponse
 var fullNameWidget *widget.Label
 var outputImage *canvas.Image
 var videoIsRunning bool = false
@@ -200,7 +201,9 @@ func makeLoginFormTab() fyne.CanvasObject {
 
 					pingResponse, _ = api.Ping(strUrl)
 					fullNameWidget.SetText(loginResponse.Fullname)
-					//fmt.Println(api.Ping(strUrl))
+
+					kandidatenResponse, _ = api.GetKandidaten(strUrl)
+					fmt.Println(kandidatenResponse)
 					loginContainer.Hide()
 					mainAppContainer.Show()
 				} else {

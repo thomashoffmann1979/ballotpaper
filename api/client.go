@@ -90,3 +90,11 @@ func Ping(url string) (PingResponse, error) {
 	json.Unmarshal([]byte(sb), &response)
 	return response, err
 }
+
+
+func GetKandidaten(url string) (KandidatenResponse, error) {
+	var response KandidatenResponse
+	sb,err := Get(url+"ds/kandidaten/read")
+	json.Unmarshal([]byte(sb), &response)
+	return response, err
+}
