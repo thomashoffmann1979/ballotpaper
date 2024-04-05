@@ -30,6 +30,11 @@ var (
 
 	start time.Time
 	scannerImageSmallShrink int = 3
+
+	strSystemUrl string
+	strSystemLogin string
+	strSystemPassword string
+	
 )
 
 type DocumentConfigurationPageSize struct {
@@ -70,6 +75,11 @@ func main() {
 	flag.BoolVar(&dontScanBarcode, "nobarcode", true, "do not scan barcode")
 	flag.BoolVar(&showTesseractCropped, "showtesseractcropped", false, "show tesseract cropped")
 	flag.BoolVar(&showScannerImage, "showscannerimage", false, "show scanner image")
+
+	flag.StringVar(&strSystemUrl, "url", "http://localhost/wm/" , "system url")
+	flag.StringVar(&strSystemLogin, "login", "max.muster@tualo.io" , "system login")
+	flag.StringVar(&strSystemPassword, "password", "none" , "system password")
+
 	flag.Parse()
 
 	start = time.Now()
@@ -91,15 +101,16 @@ func main() {
 	}
 
 	switch strType {
+		case "app":
+			fmt.Println("app")
+			appwindow()
 		case "camera":
 			fmt.Println("camera",			dontScanBarcode		)
-			cameras(template)
+			cameras( )
 		case "detect":
 			image := gocv.IMRead(strInputFile, gocv.IMReadColor)
-
 			lastTesseract := TesseractReturnType{}
-		
-			process(image,template,lastTesseract);
+			process(image,lastTesseract);
 		case "compare":
 			fmt.Println("comparing image")
 		case "help":

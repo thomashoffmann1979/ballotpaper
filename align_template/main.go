@@ -79,11 +79,7 @@ func align_images(use_image gocv.Mat, template gocv.Mat, maxFeatures  int  , kee
 	output := gocv.NewMat()
 	gocv.DrawMatches(use_image, kpsA, template, kpsB, matches, &output, color.RGBA{0, 255, 0, 0},color.RGBA{0, 0, 255, 0}, nil, gocv.DrawDefault)
 
-	/*
-	window := gocv.NewWindow("output")
-	window.IMShow(output)
-	window.WaitKey(1)
-	*/
+
 	gocv.IMWrite("draw_matches.jpg", output)
 
 

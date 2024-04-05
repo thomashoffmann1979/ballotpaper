@@ -165,9 +165,7 @@ func findCircles(croppedMat gocv.Mat , circleSize int,minDist float64) []bool {
 	// fmt.Println("checkMarksList: ", checkMarksList)
 	// gocv.Threshold(imgGray, &imgRGray, 40, 255, gocv.ThresholdBinary + gocv.ThresholdOtsu)
 			
-
-	findCirclesWindow := gocv.NewWindow("findCircles")
-	findCirclesWindow.IMShow(imgRGray)
-
+	showImage("findCircles", imgRGray, 0)
+	
 	return checkMarksList
 }

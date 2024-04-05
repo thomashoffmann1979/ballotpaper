@@ -20,7 +20,7 @@ func IndexOf[T comparable](collection []T, el T) int {
     return -1
 }
 
-func process(img gocv.Mat, template gocv.Mat, lastTesseract TesseractReturnType) ( TesseractReturnType) {
+func process(img gocv.Mat, lastTesseract TesseractReturnType) ( TesseractReturnType) {
 //	maxCircles := 0
 
 	lastTesseract.IsCorrect=false
@@ -37,7 +37,6 @@ func process(img gocv.Mat, template gocv.Mat, lastTesseract TesseractReturnType)
 	var strBarcode string=""
 	var minDist float64=1000
 
-	window := gocv.NewWindow("output")
 
 	if rotated.Empty() {
 		return lastTesseract
@@ -71,8 +70,7 @@ func process(img gocv.Mat, template gocv.Mat, lastTesseract TesseractReturnType)
 				return  lastTesseract
 			}
 
-			paperwindow := gocv.NewWindow("paper")
-			paperwindow.IMShow(paper)
+			showImage("paper", paper, 0)
 
 			if runScanner {
 				strBarcode = scanBarcode(paper)
@@ -176,8 +174,7 @@ func process(img gocv.Mat, template gocv.Mat, lastTesseract TesseractReturnType)
 					// }
 				}
 				
-				window.IMShow(rotated)
-				window.WaitKey(1)
+				showImage("rotated", rotated, 1)
 
 
 				if rotated.Empty() {
@@ -187,8 +184,7 @@ func process(img gocv.Mat, template gocv.Mat, lastTesseract TesseractReturnType)
 		}
 	}
 
-	window.IMShow(rotated)
-	window.WaitKey(1)
+	showImage("output", rotated, 1)
 
 	return  tesseractReturn
 	

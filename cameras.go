@@ -24,8 +24,10 @@ type CheckMarkList struct {
 	Checked bool
 }
 
+var runVideo bool = true
+
 // ,checkMarkList []CheckMarkList, lastTitle string
-func cameras(template gocv.Mat) {
+func cameras( ) {
 	
 	webcam, err := gocv.VideoCaptureDeviceWithAPI(intCamera,0)
 	if err != nil {
@@ -36,7 +38,8 @@ func cameras(template gocv.Mat) {
 
 	webcam.Set(gocv.VideoCaptureFrameWidth, 1280*3)
 	webcam.Set(gocv.VideoCaptureFrameHeight, 720*3)
-	window := gocv.NewWindow("cameras")
+	
+	
 	img := gocv.NewMat()
 	defer img.Close()
 	checkMarkList := []CheckMarkList{}
@@ -46,10 +49,11 @@ func cameras(template gocv.Mat) {
 	currentBox:=""
 	currentStack:=""
 
-	for {
+	for runVideo {
 		webcam.Read(&img)
+
 		if runProcess {
-			processResult := process(img, template, lastTesseract)
+			processResult := process(img , lastTesseract)
 
 			if processResult.FCBarcode!="" {
 				log.Printf("using BOX: %s ", processResult.FCBarcode)
@@ -96,15 +100,13 @@ func cameras(template gocv.Mat) {
 				if len(checkMarkList)>0 && checkMarkList[0].Count>5 {
 					if currentBox!="" {
 						log.Printf("Box: %s, Stack: %s, Barcode: %s, Title: %s, Marks: %s",currentBox,currentStack, processResult.Barcode , processResult.Title, outList)
-						processResult=TesseractReturnType{}
+					//	processResult=TesseractReturnType{}
 					}
-					checkMarkList = []CheckMarkList{}
+					//checkMarkList = []CheckMarkList{}
 				}
 			}
 			lastTesseract = processResult
 		}
-		window.IMShow(img)
-		window.WaitKey(1)
-	
+		showImage("camera", img, 1)
 	}
 }

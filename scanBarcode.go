@@ -7,16 +7,18 @@ import (
 	"github.com/bieber/barcode"
 )
 
-func scanBarcode(paper gocv.Mat) string {
+//var sem = make(chan int, 10)
 
+func scanBarcode(paper gocv.Mat) string {
+	//sem <- 1
 	result:=""
 	imgGray := gocv.NewMat()
 	defer imgGray.Close()
 
 	gocv.CvtColor(paper, &imgGray, gocv.ColorBGRToGray)
 	scanner := barcode.NewScanner().SetEnabledAll(false)
-	//scanner.SetEnabledSymbology(barcode.Code39,true)
-	scanner.SetEnabledSymbology(barcode.Code128,true)
+		// scanner.SetEnabledSymbology(barcode.Code39,true)
+		scanner.SetEnabledSymbology(barcode.Code128,true)
 
 	rect := image.Rect(paper.Cols()/2, 0, paper.Cols(), paper.Rows()/10)
 	if boolVerbose {
@@ -48,15 +50,19 @@ func scanBarcode(paper gocv.Mat) string {
 	}
 	
 	if showScannerImage {
-		scannerImageWindow := gocv.NewWindow("scannerImageWindow")
-		scannerImageWindow.IMShow(scannerImageSmall)
+		showImage("scannerImageWindow", scannerImageSmall, 0)
 	}
 
-	symbols, _ := scanner.ScanMat(&scannerImageSmall)
-	for _, s := range symbols {
-		result = s.Data
-		//fmt.Println(result)
+	if !scannerImageSmall.Empty() {
+		//fmt.Println(sem)
+		// fmt.Println(scannerImageSmall.Cols(), scannerImageSmall.Rows()	)
+		symbols, _ := scanner.ScanMat(&scannerImageSmall)
+		for _, s := range symbols {
+			result = s.Data
+			//fmt.Println(result)
+		}
+		scannerImage.Close()
 	}
-	defer scannerImage.Close()
+	//<-sem
 	return result
 }

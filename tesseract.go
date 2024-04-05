@@ -119,8 +119,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 			}
 
 			if showTesseractCropped {
-				croppedwindow := gocv.NewWindow("cropped")
-				croppedwindow.IMShow(croppedMat)
+				showImage("cropped", croppedMat, 0)
 			}
 		
 		}
