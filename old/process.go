@@ -1,27 +1,32 @@
 package main
 
 import (
+	/*
 	"fmt"
 	"image"
 	"log"
 	"time"
 	// "sort"
 	"image/color"
+	
+	*/
 	"gocv.io/x/gocv"
 )
 
 
-func IndexOf[T comparable](collection []T, el T) int {
-    for i, x := range collection {
-        if x == el {
-            return i
-        }
-    }
-    return -1
-}
+
 
 func process(img gocv.Mat, lastTesseract TesseractReturnType) ( TesseractReturnType) {
-//	maxCircles := 0
+	var tesseractReturn TesseractReturnType
+	return tesseractReturn
+	/*
+	// das bild für den barcode scanner kopieren
+	if len(scannerChannelImage)==cap(scannerChannelImage) {
+		<-scannerChannelImage
+	}
+	cloned := img.Clone()
+	scannerChannelImage <- cloned
+
 
 	lastTesseract.IsCorrect=false
 	lastTesseract.FCBarcode=""
@@ -70,10 +75,12 @@ func process(img gocv.Mat, lastTesseract TesseractReturnType) ( TesseractReturnT
 				return  lastTesseract
 			}
 
-			showImage("paper", paper, 0)
+			showImage("paper", paper )
 
 			if runScanner {
-				strBarcode = scanBarcode(paper)
+
+
+				strBarcode = scanBarcode(img)
 				tesseractReturn.FCBarcode=""
 				if strBarcode == "" {
 					strBarcode = lastTesseract.Barcode
@@ -174,7 +181,7 @@ func process(img gocv.Mat, lastTesseract TesseractReturnType) ( TesseractReturnT
 					// }
 				}
 				
-				showImage("rotated", rotated, 1)
+				showImage("rotated", rotated )
 
 
 				if rotated.Empty() {
@@ -184,9 +191,9 @@ func process(img gocv.Mat, lastTesseract TesseractReturnType) ( TesseractReturnT
 		}
 	}
 
-	showImage("output", rotated, 1)
+	showImage("output", rotated )
 
 	return  tesseractReturn
 	
-	
+	*/
 }

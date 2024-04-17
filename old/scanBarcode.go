@@ -7,9 +7,8 @@ import (
 	"github.com/bieber/barcode"
 )
 
-//var sem = make(chan int, 10)
-
 func scanBarcode(paper gocv.Mat) string {
+	
 	//sem <- 1
 	result:=""
 	imgGray := gocv.NewMat()
@@ -45,12 +44,12 @@ func scanBarcode(paper gocv.Mat) string {
 	defer scannerImageSmall.Close()
 	gocv.Resize(scannerImage, &scannerImageSmall, image.Point{scannerImage.Cols()/ scannerImageSmallShrink, scannerImage.Rows()/ scannerImageSmallShrink}, 0, 0, gocv.InterpolationLinear)
 
-	if (paper.Rows()<400){
+	if (paper.Rows()<6000){
 		scannerImageSmall = scannerImage.Clone()
 	}
 	
 	if showScannerImage {
-		showImage("scannerImageWindow", scannerImageSmall, 0)
+		showImage("scannerImageWindow", scannerImageSmall )
 	}
 
 	if !scannerImageSmall.Empty() {

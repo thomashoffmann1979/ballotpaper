@@ -17,18 +17,7 @@ func fileformatBytes(img gocv.Mat) []byte {
 	return buffer.GetBytes(	)
 }
 
-type TesseractReturnType struct {
-	Point    image.Point
-	FCBarcode   string
-	Barcode   string
-	Title   string
-	IsCorrect bool
-	Marks   []bool
-	PageRois []DocumentConfigurationPageRoi
-	Pagesize DocumentConfigurationPageSize
-	CircleSize int
-	CircleMinDistance int
-}
+
 
 func tesseract(img gocv.Mat) (TesseractReturnType) {
 	result:=TesseractReturnType{}
@@ -45,7 +34,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 	defer client.Close()
 
 
-	if boolVerbose {
+	if false {
 		fmt.Println("tesseract",documentConfigurations, img.Cols(), img.Rows())
 	}
 	for i := 0; i < len(documentConfigurations); i++ {
@@ -63,17 +52,16 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		H := documentConfigurations[i].TitleRegion.Height * img.Rows() / result.Pagesize.Height
 
 		croppedMat := img.Region(image.Rect(X, Y, W+X, H+Y))
-		defer croppedMat.Close()
-
 
 		if croppedMat.Empty() {
+			croppedMat.Close()
 			return result
 		}
 
 
 
-		imgColor := gocv.NewMat()
-		gocv.CvtColor(croppedMat, &imgColor, gocv.ColorGrayToBGR)
+		// imgColor := gocv.NewMat()
+		// gocv.CvtColor(croppedMat, &imgColor, gocv.ColorGrayToBGR)
 		// client.SetWhitelist("EinzelhandelEnergie")
 		seterror := client.SetImageFromBytes(fileformatBytes(croppedMat))
 		if seterror != nil {
@@ -83,25 +71,21 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		out, herr := client.GetBoundingBoxes(3)
 		if herr != nil {
 			fmt.Println(herr)
+			croppedMat.Close()
 			return result
 		}else{
-			// fmt.Println(out[0].Word)
-			if boolVerbose {
+			if false {
 				fmt.Println(out[0].Word)
 			}
-
-			// documentConfigurations[i].Titles
 			for j := 0; j < len(documentConfigurations[i].Titles); j++ {
 				distance := levenshtein.ComputeDistance(out[0].Word, documentConfigurations[i].Titles[j])
-				if boolVerbose {
+				if false {
 					fmt.Printf("The distance between %s and %s is %d %d.\n", out[0].Word, documentConfigurations[i].Titles[j], len( documentConfigurations[i].Titles[j]), distance)
 				}
 				if distance < 3 {
-
 					result.Title=documentConfigurations[i].Titles[j]
 					//title = out[0].Word
 					drawContours := gocv.NewPointsVector()
-					defer drawContours.Close()
 					contour:= gocv.NewPointVectorFromPoints([]image.Point{
 						out[0].Box.Min,
 						image.Point{out[0].Box.Max.X, out[0].Box.Min.Y},
@@ -109,23 +93,21 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 						image.Point{out[0].Box.Min.X, out[0].Box.Max.Y} 			})
 					drawContours.Append(contour)
 					gocv.DrawContours(&croppedMat, drawContours, -1, color.RGBA{0, 255, 0, 0}, 2)
-
-					// result.Point = out[0].Box.Min
 					result.Point = image.Point{documentConfigurations[i].TitleRegion.X, documentConfigurations[i].TitleRegion.Y}
-			
+					croppedMat.Close()
+					drawContours.Close()
 					return result
 				}
 
 			}
 
-			if showTesseractCropped {
-				showImage("cropped", croppedMat, 0)
-			}
+			
 		
 		}
+		croppedMat.Close()
 	}
 	
-	
+	readyToSave = false
 
 	return result
 

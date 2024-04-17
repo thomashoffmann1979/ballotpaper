@@ -17,29 +17,20 @@ type CheckMarks struct {
 }
 
 
-type CheckMarkList struct {
-	Count int
-	Sum int
-	AVG float64
-	Checked bool
-}
 
 var runVideo bool = true
 
 // ,checkMarkList []CheckMarkList, lastTitle string
 func cameras( ) {
-	
 	webcam, err := gocv.VideoCaptureDeviceWithAPI(intCamera,0)
 	if err != nil {
 		fmt.Println("Error opening capture device: ", 0)
 		return
 	}
 	defer webcam.Close()
-
 	webcam.Set(gocv.VideoCaptureFrameWidth, 1280*3)
 	webcam.Set(gocv.VideoCaptureFrameHeight, 720*3)
-	
-	
+	webcam.Set(gocv.VideoCaptureFocus, 20)
 	img := gocv.NewMat()
 	defer img.Close()
 	checkMarkList := []CheckMarkList{}
@@ -51,21 +42,40 @@ func cameras( ) {
 
 	for runVideo {
 		webcam.Read(&img)
-
 		if runProcess {
 			processResult := process(img , lastTesseract)
 
+			/*
 			if processResult.FCBarcode!="" {
 				log.Printf("using BOX: %s ", processResult.FCBarcode)
+				checkMarkList = []CheckMarkList{}
 				if processResult.FCBarcode[0:3]=="FC4" {
+					
+
 					currentBox=processResult.FCBarcode
 					currentStack = processResult.FCBarcode[0:2]+"3"+processResult.FCBarcode[3:]
+
+					if len(currentBoxChannel)==cap(currentBoxChannel) {
+						<-currentBoxChannel
+					}
+					currentBoxChannel <- currentBox
+
+					if len(currentStackChannel)==cap(currentStackChannel) {
+						<-currentStackChannel
+					}
+					currentStackChannel <- currentStack
 				}
 				if processResult.FCBarcode[0:3]=="FC3" {
 					currentStack=processResult.FCBarcode
+
+					if len(currentStackChannel)==cap(currentStackChannel) {
+						<-currentStackChannel
+					}
+					currentStackChannel <- currentStack
 				}
-				//log.Printf("Saving BOX: %s ", processResult.FCBarcode)
+
 			}
+			*/
 			if processResult.IsCorrect {
 				if processResult.Title != lastTesseract.Title || processResult.Barcode != lastTesseract.Barcode {
 					checkMarkList = []CheckMarkList{}
@@ -107,6 +117,6 @@ func cameras( ) {
 			}
 			lastTesseract = processResult
 		}
-		showImage("camera", img, 1)
+		showImage("camera", img )
 	}
 }

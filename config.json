@@ -16,8 +16,8 @@
             "width": 210,
             "height": 297
         },
-        "circleSize": 2,
-        "circleMinDistance": 18,
+        "circleSize": 3,
+        "circleMinDistance": 22,
         "rois": [
             {
                 "titles": [

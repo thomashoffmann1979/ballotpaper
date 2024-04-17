@@ -106,11 +106,15 @@ func main() {
 			appwindow()
 		case "camera":
 			fmt.Println("camera",			dontScanBarcode		)
-			cameras( )
+			fmt.Println("not implemented");
+			// cameras( )
 		case "detect":
+			/*
 			image := gocv.IMRead(strInputFile, gocv.IMReadColor)
 			lastTesseract := TesseractReturnType{}
 			process(image,lastTesseract);
+			*/
+			fmt.Println("not implemented");
 		case "compare":
 			fmt.Println("comparing image")
 		case "help":
