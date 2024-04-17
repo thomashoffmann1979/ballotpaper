@@ -10,7 +10,6 @@ import (
 	"time"
 	"encoding/json"
 	"log"
-	"golang.org/x/net/publicsuffix"
 
 )
 
@@ -25,7 +24,7 @@ func dialTimeout(network, addr string) (net.Conn, error) {
 
 func InitJar() {
 	if Jar == nil {
-		jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+		jar, err := cookiejar.New(&cookiejar.Options{ })
 		if err != nil {
 			log.Fatal(err)
 		}
