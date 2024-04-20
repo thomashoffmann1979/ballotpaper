@@ -50,6 +50,12 @@ func processPaperChannelImage() {
 						imgGray := paper.Clone()
 
 						tesseractChannelImage <- imgGray
+
+						if len(readyToSaveChannelImage)==cap(readyToSaveChannelImage) {
+							mat,_:=<-readyToSaveChannelImage
+							mat.Close()
+						}
+						readyToSaveChannelImage <- paper.Clone()
 					}
 					paper.Close()
 					

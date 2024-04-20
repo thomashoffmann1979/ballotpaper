@@ -6,12 +6,3 @@ export GOARCH="arm64"
 export LIBRARY_PATH="/opt/homebrew/lib"
 export CPATH="/opt/homebrew/include"
 
-# WINDOWS
-# export ANDROID_NDK_HOME=/Users/thomashoffmann/Library/Android/sdk/
-# export CGO_CPPFLAGS="-I/opt/homebrew/opt/opencv/include/opencv4 -I/opt/homebrew/Cellar/leptonica/1.84.1/include -I/opt/homebrew/Cellar/mingw-w64/11.0.1/toolchain-x86_64/x86_64-w64-mingw32/include"
-# -env "CGO_CPPFLAGS='-I/usr/include/opencv/include/opencv4 -I/usr/include/leptonica/'"
-# export GOOS=windows 
-# export GOARCH=amd64
-# export GOGCCFLAGS="-fPIC -arch x86_64 -m64 -pthread -fno-caret-diagnostics -Qunused-arguments -fmessage-length=0 -fdebug-prefix-map=/var/folders/7m/mnymf5ss1mz39ygdshyl69n40000gp/T/go-build1471044767=/tmp/go-build -gno-record-gcc-switches -fno-common"
-# env GOOS=windows GOARCH=amd64 go build -o ballotpaper.exe
-

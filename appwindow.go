@@ -7,7 +7,7 @@ import (
 	// "math"
 	"image"
 	"image/color"
-	// "log"
+	"log"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	//"fyne.io/fyne/v2/cmd/fyne_demo/data"
@@ -69,6 +69,7 @@ var grabVideoCameraTicker *time.Ticker
 var cameraChannelImage chan gocv.Mat
 
 var paperChannelImage = make(chan gocv.Mat, 1)
+var readyToSaveChannelImage = make(chan gocv.Mat, 1)
 var tesseractChannelImage = make(chan gocv.Mat, 1)
 var tesseractReturnChannel = make(chan RoisChannelStruct, 1)
 
@@ -93,9 +94,13 @@ func grabVideoImage() {
 	for range grabVideoCameraTicker.C {
 		mat,ok := <-cameraChannelImage
 		if ok {
+
 			image := matToImage(mat)
 			outputImage.Image = image
 			outputImage.Refresh()
+			
+
+			
 			mat.Close()
 		}
     }
@@ -139,14 +144,32 @@ func grabChannelBarcodes() {
     }
 }
 
+func grabReadyToSaveImage() {
+	for range grabVideoCameraTicker.C {
+		mat,ok := <-readyToSaveChannelImage
+		if ok {
+			if readyToSave {
+				fileName := fmt.Sprintf("outimages/%s.jpg", ballotLabelWidget.Text)
+				// ballotLabelWidget.GetText()
+				gocv.IMWrite(fileName, mat)
+				log.Println("readyToSave")
+			}
+			mat.Close()
+		}
+	}
+}
+
 func grabPaperImage() {
 	for range grabVideoCameraTicker.C {
 		mat,ok := <-imageChannelPaper
 		if ok {
+
 			image := matToImage(mat)
 			paperImage.Image = image
 			paperImage.Refresh()
 			mat.Close()
+
+
 		}
     }
 }
@@ -409,6 +432,7 @@ func makeOuterBorder() fyne.CanvasObject {
 			go grabPaperImage()
 			go grabChannelBarcodes()
 			go grabCircleImage()
+			go grabReadyToSaveImage()
 
 
 			go scanBarcodeChannel()
