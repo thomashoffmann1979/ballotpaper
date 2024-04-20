@@ -22,3 +22,4 @@ var gaussianBlurFindCircles int = 19
 var adaptiveThresholdBlockSize int = 9
 var adaptiveThresholdSubtractMean float32 = 4.0
  
+var tesseractPrefix string = ""

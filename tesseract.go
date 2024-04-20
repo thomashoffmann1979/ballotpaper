@@ -33,6 +33,10 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 	client := gosseract.NewClient()
 	defer client.Close()
 
+	if tesseractPrefix != "" {
+		client.SetTessdataPrefix(tesseractPrefix)
+	}
+
 
 	if false {
 		fmt.Println("tesseract",documentConfigurations, img.Cols(), img.Rows())

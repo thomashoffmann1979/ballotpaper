@@ -76,6 +76,10 @@ func main() {
 	flag.BoolVar(&showTesseractCropped, "showtesseractcropped", false, "show tesseract cropped")
 	flag.BoolVar(&showScannerImage, "showscannerimage", false, "show scanner image")
 
+	
+	flag.StringVar(&tesseractPrefix, "tessdata", "" , "path to your tessdata directory")
+	
+
 	flag.StringVar(&strSystemUrl, "url", "http://localhost/wm/" , "system url")
 	flag.StringVar(&strSystemLogin, "login", "max.muster@tualo.io" , "system login")
 	flag.StringVar(&strSystemPassword, "password", "none" , "system password")
