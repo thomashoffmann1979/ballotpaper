@@ -24,3 +24,10 @@ var adaptiveThresholdBlockSize int = 9
 var adaptiveThresholdSubtractMean float32 = 4.0
  
 var tesseractPrefix string = ""
+
+var forcedCameraWidth int = -1
+var forcedCameraHeight int = -1
+
+var barcodeScale int = 1
+var tesseractScale int = 1
+

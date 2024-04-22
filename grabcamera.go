@@ -46,7 +46,16 @@ func grabcamera( ) {
 //	webcam.Set(gocv.VideoCaptureFrameWidth, 1280*1)
 //	webcam.Set(gocv.VideoCaptureFrameHeight, 720*1)
 //	4608 3456
-fmt.Println("Start grab camera: ",runVideo,intCamera)
+debug(fmt.Sprintf("Start grab camera %d ",forcedCameraWidth))
+
+	if forcedCameraWidth > 0 {
+		webcam.Set(gocv.VideoCaptureFrameWidth, float64(forcedCameraWidth))
+	}
+	if forcedCameraHeight > 0 {
+		webcam.Set(gocv.VideoCaptureFrameHeight, float64(forcedCameraHeight))
+	}
+
+	debug(fmt.Sprintf("Start grab camera: %v %v",runVideo,intCamera))
 
 	if err != nil {
 		fmt.Println("Error opening capture device: ", 0)

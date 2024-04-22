@@ -23,6 +23,8 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 
 	start := time.Now()
 
+
+
 	result:=TesseractReturnType{}
 	result.Point=image.Point{0,	0}
 	result.Title=""
@@ -70,7 +72,9 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		// imgColor := gocv.NewMat()
 		// gocv.CvtColor(croppedMat, &imgColor, gocv.ColorGrayToBGR)
 		// client.SetWhitelist("EinzelhandelEnergie")
-		seterror := client.SetImageFromBytes(fileformatBytes(croppedMat))
+		smaller := ResizeMat(croppedMat.Clone(), croppedMat.Cols()/tesseractScale, croppedMat.Rows()/tesseractScale)
+
+		seterror := client.SetImageFromBytes(fileformatBytes(smaller))
 		if seterror != nil {
 			fmt.Println(seterror)
 			return result
@@ -106,7 +110,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 
 					croppedMat.Close()
 					drawContours.Close()
-
+					smaller.Close()
 					return result
 				}
 
@@ -116,6 +120,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		
 		}
 		croppedMat.Close()
+		smaller.Close()
 	}
 	
 	debug( fmt.Sprintf("tesseract failed %s ",time.Since(start)) )

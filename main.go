@@ -84,6 +84,13 @@ func main() {
 	flag.StringVar(&strSystemLogin, "login", "max.muster@tualo.io" , "system login")
 	flag.StringVar(&strSystemPassword, "password", "none" , "system password")
 
+
+	flag.IntVar(&forcedCameraWidth, "cameraWidth", -1 , "camera width")
+	flag.IntVar(&forcedCameraHeight, "cameraHeight", -1 , "camera height")
+
+	flag.IntVar(&barcodeScale, "barcodeScale",1 , "barcode scale factor")
+	flag.IntVar(&tesseractScale, "tesseractScale",1 , "tesseract scale factor")
+
 	flag.Parse()
 
 	start = time.Now()

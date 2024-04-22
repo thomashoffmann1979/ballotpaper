@@ -1,7 +1,8 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
+	"time"
 	// "log"
 	"image"
 	"gocv.io/x/gocv"
@@ -51,6 +52,8 @@ func processBarcodeSymbol(barcodeSymbol *barcode.Symbol ) {
 }
 
 func scanBarcodeChannel() {
+	
+
 	scanner := barcode.NewScanner()
 	scanner.SetEnabledAll(false)
 	scanner.SetEnabledSymbology(barcode.Code39,true)
@@ -61,11 +64,14 @@ func scanBarcodeChannel() {
 		// log.Println("got image",ok,img.Size())
 		if ok {
 			if !img.Empty() {
-				gocv.CvtColor(img, &img, gocv.ColorBGRToGray)
+				start := time.Now()
+				smaller:=ResizeMat(img, img.Cols() / barcodeScale, img.Rows() /barcodeScale)
+				gocv.CvtColor(smaller, &smaller, gocv.ColorBGRToGray)
+				//smaller.Close()
 				// mean := img.Mean()
 				//if (mean.Val1+mean.Val2+mean.Val3)/3 > 100 {
 
-					symbols, err := scanner.ScanMat(&img)
+					symbols, err := scanner.ScanMat(&smaller)
 					if err != nil {
 						panic(err)
 					}
@@ -79,7 +85,10 @@ func scanBarcodeChannel() {
 					}
 					scannerChannelBarcodes <- syms
 				//}
-				img.Close()
+				debug( fmt.Sprintf("barcode %s %d %d",time.Since(start),smaller.Cols(),smaller.Rows()) )
+				// img.Close()
+				smaller.Close()
+
 			}
 		}
 		// paper.Close()
