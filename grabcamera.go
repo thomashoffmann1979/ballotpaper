@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
     // "log"
+	"time"
 	"image"
 	// "sort"
 	// "image/color"
@@ -28,8 +30,19 @@ func getCameraList() []CameraList {
 
 func ResizeMat(img gocv.Mat,width int, height int) gocv.Mat {
 	resizeMat := gocv.NewMat()
-	gocv.Resize(img, &resizeMat, image.Point{width, height}, 0, 0, gocv.InterpolationArea)
-	img.Close()
+
+	if !img.Empty() {
+		if img.Cols() >= width && img.Rows() >= height {
+			if height>0 && width>0 {
+				// fmt.Println("ResizeMat",img.Cols(),img.Rows(),width,height)
+				gocv.Resize(img, &resizeMat, image.Point{width, height}, 0, 0, gocv.InterpolationArea)
+				img.Close()
+			}
+		}
+	}
+	if resizeMat.Empty() {
+		return img
+	}
 	return resizeMat
 }
 
@@ -70,7 +83,7 @@ debug(fmt.Sprintf("Start grab camera %d ",forcedCameraWidth))
 	lastReturnType := ReturnType{}
 	*/
 	for runVideo {
-
+		start:=time.Now()
 		//debug("grabcamera")
 		webcam.Read(&img)
 		rotated := gocv.NewMat()
@@ -78,6 +91,7 @@ debug(fmt.Sprintf("Start grab camera %d ",forcedCameraWidth))
 		gocv.Rotate(img, &rotated, gocv.Rotate90Clockwise)
 
 		
+		debug( fmt.Sprintf("grab %s %d %d %d",time.Since(start),rotated.Cols(),rotated.Rows() , os.Getpid() ) )
 
 		// Videooutput
 		if len(cameraChannelImage)==cap(cameraChannelImage) {
