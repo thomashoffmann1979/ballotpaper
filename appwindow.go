@@ -27,7 +27,6 @@ import (
 	"gocv.io/x/gocv"
 
 
-	"golang.design/x/thread"
 
 )
 
@@ -96,11 +95,6 @@ func matToImage(mat gocv.Mat) image.Image {
 	return img
 }
 
-var thread1 = thread.New()
-var thread2 = thread.New()
-var thread3 = thread.New()
-var thread4 = thread.New()
-var thread5 = thread.New()
 
 
 func grabVideoImage() {
@@ -108,10 +102,12 @@ func grabVideoImage() {
 		mat,ok := <-cameraChannelImage
 		if ok {
 
+			start := time.Now()
 			image := matToImage(mat)
 			outputImage.Image = image
 			outputImage.Refresh()
 			
+			fmt.Println("grabVideoImage time",time.Since(start))
 
 			
 			mat.Close()
@@ -487,10 +483,6 @@ func makeOuterBorder() fyne.CanvasObject {
 			grabVideoCameraTicker.Stop()
 			videoIsRunning = false
 			runVideo = false
-			thread1.Terminate()
-			thread2.Terminate()
-			thread3.Terminate()
-			thread4.Terminate()
 		} else {
 			runVideo = true
 			videoIsRunning = true
@@ -500,55 +492,28 @@ func makeOuterBorder() fyne.CanvasObject {
 
 			fmt.Println("id",os.Getpid())
 
-			thread1 = thread.New()
-			thread1.CallNonBlock(func() {
-				grabcamera() 
-			})
+			
 
 			
-			thread2 = thread.New()
-			thread2.CallNonBlock(func() {
-				grabVideoImage() 
-			})
+			go grabVideoImage() 
+			go grabcamera() 
+
+			if false {
+				go grabPaperImage()
+				go grabChannelBarcodes()
+				go grabCircleImage()
+				go grabReadyToSaveImage()
 
 
-			thread4 = thread.New()
-			thread4.CallNonBlock(func() {
-				scanBarcodeChannel() 
-			})
-
-			thread3 = thread.New()
-			thread3.CallNonBlock(func() {
-				processTesseractChannelImage() 
-			})
-			
-			go grabPaperImage()
-			go grabChannelBarcodes()
-			go grabCircleImage()
-			go grabReadyToSaveImage()
-
-			go processPaperChannelImage()
-			go processRoisChannel()
-
-			/*
-			go grabPaperImage()
-			go grabChannelBarcodes()
-			go grabCircleImage()
-			go grabReadyToSaveImage()
-
-
-			go scanBarcodeChannel()
-			go processPaperChannelImage()
-			go processTesseractChannelImage()
-			go processRoisChannel()
-*/
-			/*
-			
-			
-			
-			go grabCurrentBox()
-			go grabCurrentStack()
-			*/
+				go scanBarcodeChannel()
+				go processPaperChannelImage()
+				go processTesseractChannelImage()
+				go processRoisChannel()
+				
+				
+				go grabCurrentBox()
+				go grabCurrentStack()
+			}
 		}
 		
 	})
