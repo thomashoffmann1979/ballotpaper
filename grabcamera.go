@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	// "log"
-	// "image"
+    // "log"
+	"image"
 	// "sort"
 	// "image/color"
 	"gocv.io/x/gocv"
@@ -25,16 +25,29 @@ func getCameraList() []CameraList {
 	return cameraList
 }
 
+
+func ResizeMat(img gocv.Mat,width int, height int) gocv.Mat {
+	resizeMat := gocv.NewMat()
+	gocv.Resize(img, &resizeMat, image.Point{width, height}, 0, 0, gocv.InterpolationArea)
+	img.Close()
+	return resizeMat
+}
+
 func grabcamera( ) {
 	webcam, err := gocv.VideoCaptureDeviceWithAPI(intCamera,0)
 	/*
 	webcam.Set(gocv.VideoCaptureFrameWidth, 1280*3)
 	webcam.Set(gocv.VideoCaptureFrameHeight, 720*3)
-	
-	webcam.Set(gocv.VideoCaptureFrameWidth, 1280*2)
-	webcam.Set(gocv.VideoCaptureFrameHeight, 720*2)
 	*/
 	
+//	webcam.Set(gocv.VideoCaptureFrameWidth, 1280*2)
+//	webcam.Set(gocv.VideoCaptureFrameHeight, 720*2)
+
+//	webcam.Set(gocv.VideoCaptureFrameWidth, 1280*1)
+//	webcam.Set(gocv.VideoCaptureFrameHeight, 720*1)
+//	4608 3456
+fmt.Println("Start grab camera: ",runVideo,intCamera)
+
 	if err != nil {
 		fmt.Println("Error opening capture device: ", 0)
 		return
@@ -48,11 +61,14 @@ func grabcamera( ) {
 	lastReturnType := ReturnType{}
 	*/
 	for runVideo {
+
+		//debug("grabcamera")
 		webcam.Read(&img)
 		rotated := gocv.NewMat()
 
 		gocv.Rotate(img, &rotated, gocv.Rotate90Clockwise)
 
+		
 
 		// Videooutput
 		if len(cameraChannelImage)==cap(cameraChannelImage) {

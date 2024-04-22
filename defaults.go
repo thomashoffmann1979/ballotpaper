@@ -8,6 +8,7 @@ var runVideo bool = false
 var showOutputImage bool = false
 var showPaperImage bool = true
 var showCirlceImage bool = false
+var showDebugList bool = false
 
 var innerOverdrawDrawCircles int = 5
 var outerOverdrawDrawCircles int = 30

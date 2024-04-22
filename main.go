@@ -67,7 +67,7 @@ type DocumentConfigurations []struct {
 
 func main() {
 
-	flag.StringVar(&strType, "type", "" , "detect type of image")
+	flag.StringVar(&strType, "type", "app" , "detect type of image")
 	flag.StringVar(&strInputFile, "input", "" , "input file")
 	flag.IntVar(&intCamera, "camera", 0 , "camera")
 	flag.StringVar(&strCompareFile, "template", "" , "template file")

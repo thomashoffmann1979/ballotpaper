@@ -59,6 +59,7 @@ var gaussianBlurFindCirclesWidgetLabel *widget.Label
 var adaptiveThresholdBlockSizeWidgetLabel *widget.Label
 var adaptiveThresholdSubtractMeanWidgetLabel *widget.Label
 
+var debugListWidget *widget.List
 
 var outputImage *canvas.Image
 var paperImage *canvas.Image
@@ -72,6 +73,10 @@ var paperChannelImage = make(chan gocv.Mat, 1)
 var readyToSaveChannelImage = make(chan gocv.Mat, 1)
 var tesseractChannelImage = make(chan gocv.Mat, 1)
 var tesseractReturnChannel = make(chan RoisChannelStruct, 1)
+
+
+var debugChannel = make(chan string, 10)
+var debugData = []string{"", "", "", "", "", "", "", "", "", ""}
 
 
 var roisReturnChannel = make(chan RoisChannelStruct, 1)
@@ -204,6 +209,38 @@ func grabCurrentStack() {
     }
 }
 
+
+func grabDebugs() {
+	for range grabVideoCameraTicker.C {
+		data,ok := <-debugChannel
+		if ok {
+			for i:=len(debugData)-1;i>0;i-- {
+				debugData[i] = debugData[i-1]
+			}
+			debugData[0] = data
+			debugListWidget.Refresh()
+			// debugListWidget.Add(data)
+		}
+	}
+}
+
+
+func updateDebugData(i widget.ListItemID, o fyne.CanvasObject) {
+	o.(*widget.Label).SetText(debugData[i])
+}
+
+func makeDebugList() *widget.List {
+	return widget.NewList(
+		func() int {
+			return len(debugData)
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("template")
+		},
+		updateDebugData,
+	)
+}
+
 func makeVideoGrid() fyne.CanvasObject {
 
 	outputImage = canvas.NewImageFromImage(matToImage(gocv.NewMatWithSize(640, 480, gocv.MatTypeCV8UC3)))
@@ -223,12 +260,20 @@ func makeVideoGrid() fyne.CanvasObject {
 	if !showCirlceImage {
 		circleImage.Hide()
 	}
+
+
+	debugListWidget = makeDebugList()
+	if !showDebugList {
+		debugListWidget.Hide()
+	}
 	
 	return container.New(
 		layout.NewGridLayout(3), 
 		outputImage, 
 		paperImage, 
-		circleImage)
+		circleImage,
+		debugListWidget,
+	)
 }
 
 func onCameraSelectWidget(item string) { 
@@ -341,6 +386,16 @@ func makeSettingsForm() fyne.CanvasObject {
 	})
 	outputImageCheck.SetChecked(showOutputImage)
 
+	debugListCheck := widget.NewCheck("Anzeigen", func(c bool) {
+		if c {
+			debugListWidget.Show()
+		} else {
+			debugListWidget.Hide()
+		}
+		
+	})
+	debugListCheck.SetChecked(showDebugList)
+
 	//func(s string) { fmt.Println("selected", s) })
 	// container.NewBorder(nil, nil, nil, nil,
 
@@ -379,7 +434,8 @@ func makeSettingsForm() fyne.CanvasObject {
 					layout.NewGridLayout(2), 
 					widget.NewLabel("Kamerabild"),outputImageCheck,
 					widget.NewLabel("Papier"),paperImageCheck,
-					widget.NewLabel("Findcircle"),circleImageCheck,) },
+					widget.NewLabel("Findcircle"),circleImageCheck,
+					widget.NewLabel("Debug"),debugListCheck,) },
 					
 		),
 	)
@@ -428,11 +484,14 @@ func makeOuterBorder() fyne.CanvasObject {
 			videoIsRunning = true
 			go grabcamera() 
 			grabVideoCameraTicker = time.NewTicker(1 * time.Millisecond)
+
+
 			go grabVideoImage()
 			go grabPaperImage()
 			go grabChannelBarcodes()
 			go grabCircleImage()
 			go grabReadyToSaveImage()
+			go grabDebugs()
 
 
 			go scanBarcodeChannel()

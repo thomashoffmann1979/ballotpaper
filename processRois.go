@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"log"
 	"image"
 	//"image/color"
@@ -84,7 +84,10 @@ func processRoisChannel() {
 						pixelScaleY=1
 					}
 
+
 					log.Printf("pixelScale: %.1f , %.1f  ",pixelScale, pixelScaleY);
+					debug(fmt.Sprintf("pixelScale: %.1f , %.1f  ",pixelScale, pixelScaleY))
+
 
 					X := int(float64(roisReturn.tesseractReturn.PageRois[pRoiIndex].X) * pixelScale)
 					Y := int(float64(roisReturn.tesseractReturn.PageRois[pRoiIndex].Y) * pixelScaleY)

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	
+	"time"
 	"image"
 	"image/color"
 	"github.com/otiai10/gosseract/v2"
@@ -20,6 +20,9 @@ func fileformatBytes(img gocv.Mat) []byte {
 
 
 func tesseract(img gocv.Mat) (TesseractReturnType) {
+
+	start := time.Now()
+
 	result:=TesseractReturnType{}
 	result.Point=image.Point{0,	0}
 	result.Title=""
@@ -98,8 +101,12 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 					drawContours.Append(contour)
 					gocv.DrawContours(&croppedMat, drawContours, -1, color.RGBA{0, 255, 0, 0}, 2)
 					result.Point = image.Point{documentConfigurations[i].TitleRegion.X, documentConfigurations[i].TitleRegion.Y}
+
+					debug( fmt.Sprintf("ocr %s %d %d",time.Since(start),croppedMat.Cols(),croppedMat.Rows() ) )
+
 					croppedMat.Close()
 					drawContours.Close()
+
 					return result
 				}
 
@@ -111,6 +118,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		croppedMat.Close()
 	}
 	
+	debug( fmt.Sprintf("tesseract failed %s ",time.Since(start)) )
 	readyToSave = false
 
 	return result
