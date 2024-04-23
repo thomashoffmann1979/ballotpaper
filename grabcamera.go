@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
-    // "log"
+	//"os"
+    "log"
 	"time"
 	"image"
 	// "sort"
@@ -34,7 +34,7 @@ func ResizeMat(img gocv.Mat,width int, height int) gocv.Mat {
 	if !img.Empty() {
 		if img.Cols() >= width && img.Rows() >= height {
 			if height>0 && width>0 {
-				// fmt.Println("ResizeMat",img.Cols(),img.Rows(),width,height)
+				fmt.Println("ResizeMat",img.Cols(),img.Rows(),width,height)
 				gocv.Resize(img, &resizeMat, image.Point{width, height}, 0, 0, gocv.InterpolationArea)
 				img.Close()
 			}
@@ -90,8 +90,9 @@ func grabcamera( ) {
 
 		gocv.Rotate(img, &rotated, gocv.Rotate90Clockwise)
 
+		log.Println("grabcamera >>>>>>>>>>>>>>>>>>>>",rotated.Cols(),rotated.Rows(),time.Since(start))
 		
-		debug( fmt.Sprintf("grab %s %d %d %d",time.Since(start),rotated.Cols(),rotated.Rows() , os.Getpid() ) )
+		//debug( fmt.Sprintf("grab %s %d %d %d",time.Since(start),rotated.Cols(),rotated.Rows() , os.Getpid() ) )
 
 		// Videooutput
 		if len(cameraChannelImage)==cap(cameraChannelImage) {

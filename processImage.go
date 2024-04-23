@@ -3,26 +3,45 @@ package main
 import (
 	"log"
 	"gocv.io/x/gocv"
+	"image"
+	"time"
 	"github.com/bieber/barcode"
 )
 
 
 
 func findBarcodes(scanner *barcode.ImageScanner, img gocv.Mat)[]BarcodeSymbol{
-	//smaller:=ResizeMat(img, img.Cols() / barcodeScale, img.Rows() /barcodeScale)
+	syms := []BarcodeSymbol{}
+	if img.Empty() {
+		return syms
+	}
 	smaller:=gocv.NewMat()
 	gocv.CvtColor(img, &smaller, gocv.ColorBGRToGray)
-	log.Println("findBarcodes",barcodeScale)
+	if smaller.Cols() > 800 {
+		gocv.GaussianBlur(smaller, &smaller, image.Point{5, 5}, 0, 0, gocv.BorderDefault)
+		gocv.Resize(smaller, &smaller, image.Point{smaller.Cols() / barcodeScale, smaller.Rows() / barcodeScale}, 0, 0, gocv.InterpolationArea)
+	}
+	log.Println("barcodeScale",barcodeScale)
 	symbols, err := scanner.ScanMat(&smaller)
 	if err != nil {
 		panic(err)
 	}
+	
+	/*
 	log.Println("findBarcodes",len(symbols))
-	syms := []BarcodeSymbol{}
+	if len(symbols) == 0 {
+		gocv.IMWrite("noBarcode.png",img)
+	}else{
+		gocv.IMWrite("barcode.png",img)
+	
+	}
+	*/
+	
 	for _, s := range symbols {
 		syms = append(syms,BarcodeSymbol{Type:s.Type.Name(),Data:s.Data,Quality:s.Quality,Boundary:s.Boundary})
 		log.Println("BarcodeSymbol",s.Type.Name(),s.Data,s.Quality,s.Boundary)
 	}
+	smaller.Close()
 	return syms
 }
 
@@ -36,14 +55,16 @@ func processImage(){
 		if !runVideo {
 			break
 		}
-		log.Println("processImage",runVideo)
+		start:=time.Now()
+		log.Println("processImage ************")
 		//for range grabVideoCameraTicker.C {	
 		img,ok := <-paperChannelImage
 		if ok {
-			log.Println("got image",ok,img.Size())
+			log.Println("got image",ok,img.Size(),len(paperChannelImage))
 
 			if !img.Empty() {
 				contour := findPaperContour(img)
+
 				cornerPoints := getCornerPoints(contour)
 				topLeftCorner := cornerPoints["topLeftCorner"]
 				bottomRightCorner := cornerPoints["bottomRightCorner"]
@@ -52,17 +73,21 @@ func processImage(){
 				}
 
 				paper := extractPaper(img, contour, bottomRightCorner.X-topLeftCorner.X, bottomRightCorner.Y-topLeftCorner.Y, cornerPoints)
+				
 				mean := paper.Mean()
 				if (mean.Val1+mean.Val2+mean.Val3)/3 > 150 {
 					area := float64(paper.Size()[0]) * float64(paper.Size()[1]) / float64(img.Size()[0]) / float64(img.Size()[1])
-					log.Println("mean",mean.Val1,mean.Val2,mean.Val3,area,paper.Size())
+					log.Println("mean",mean.Val1,mean.Val2,mean.Val3,area,paper.Size(),time.Since(start))
 					if area > 0.1 {
 						findBarcodes(scanner,paper)
 					}
 				}
+				contour.Close()
+				paper.Close()
 			}
+			img.Close()
 		}
-		log.Println("processImage done",runVideo)
+		log.Println("processImage done %s",time.Since(start))
 	}
 	log.Println("processImage exit",runVideo)
 }

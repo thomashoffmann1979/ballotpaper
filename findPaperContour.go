@@ -14,6 +14,7 @@ func findPaperContour(img gocv.Mat) gocv.PointVector {
 	imgThresh := gocv.NewMat()
 	gocv.Threshold(imgBlur, &imgThresh, 90, 255, gocv.ThresholdBinary+gocv.ThresholdOtsu)
 	contours := gocv.FindContours(imgThresh, gocv.RetrievalCComp, gocv.ChainApproxSimple)
+	  
 	maxArea := 0.0
 	maxContourIndex := -1
 	for i := 0; i < contours.Size(); i++ {
@@ -29,9 +30,10 @@ func findPaperContour(img gocv.Mat) gocv.PointVector {
 		imgThresh.Close()
 		return gocv.NewPointVector()
 	}
-	maxContour := contours.At(maxContourIndex)
+	maxContour := gocv.NewPointVectorFromPoints( contours.At(maxContourIndex).ToPoints() )
 	imgGray.Close()
 	imgBlur.Close()
 	imgThresh.Close()
+	contours.Close()
 	return maxContour
 }
