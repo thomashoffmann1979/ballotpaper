@@ -64,6 +64,7 @@ func processImage(){
 
 			if !img.Empty() {
 				contour := findPaperContour(img)
+				log.Println("findPaperContour done %s %v",time.Since(start),contour)
 
 				cornerPoints := getCornerPoints(contour)
 				topLeftCorner := cornerPoints["topLeftCorner"]
@@ -74,14 +75,19 @@ func processImage(){
 
 				paper := extractPaper(img, contour, bottomRightCorner.X-topLeftCorner.X, bottomRightCorner.Y-topLeftCorner.Y, cornerPoints)
 				
-				mean := paper.Mean()
-				if (mean.Val1+mean.Val2+mean.Val3)/3 > 150 {
+				if paper.Empty() {
+					contour.Close()
+					img.Close()
+					continue
+				}
+				// mean := paper.Mean()
+				// if (mean.Val1+mean.Val2+mean.Val3)/3 > 150 {
 					area := float64(paper.Size()[0]) * float64(paper.Size()[1]) / float64(img.Size()[0]) / float64(img.Size()[1])
-					log.Println("mean",mean.Val1,mean.Val2,mean.Val3,area,paper.Size(),time.Since(start))
+					// log.Println("mean",mean.Val1,mean.Val2,mean.Val3,area,paper.Size(),time.Since(start))
 					if area > 0.1 {
 						findBarcodes(scanner,paper)
 					}
-				}
+				// }
 				contour.Close()
 				paper.Close()
 			}

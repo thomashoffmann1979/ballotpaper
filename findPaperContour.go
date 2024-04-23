@@ -9,8 +9,13 @@ import (
 func findPaperContour(img gocv.Mat) gocv.PointVector {
 	imgGray := gocv.NewMat()
 	gocv.CvtColor(img, &imgGray, gocv.ColorBGRToGray)
+
+
+	// gocv.Resize(imgGray, &imgGray, image.Point{imgGray.Cols() / 8, imgGray.Rows() / 8}, 0, 0, gocv.InterpolationArea)
+
+
 	imgBlur := gocv.NewMat()
-	gocv.GaussianBlur(imgGray, &imgBlur, image.Point{15, 15}, 0, 0, gocv.BorderDefault)
+	gocv.GaussianBlur(imgGray, &imgBlur, image.Point{5, 5}, 0, 0, gocv.BorderDefault)
 	imgThresh := gocv.NewMat()
 	gocv.Threshold(imgBlur, &imgThresh, 90, 255, gocv.ThresholdBinary+gocv.ThresholdOtsu)
 	contours := gocv.FindContours(imgThresh, gocv.RetrievalCComp, gocv.ChainApproxSimple)
