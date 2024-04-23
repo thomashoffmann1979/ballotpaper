@@ -90,8 +90,9 @@ func grabcamera( ) {
 
 		gocv.Rotate(img, &rotated, gocv.Rotate90Clockwise)
 
-		log.Println("grabcamera >>>>>>>>>>>>>>>>>>>>",rotated.Cols(),rotated.Rows(),time.Since(start))
-		
+		if false {
+			log.Println("grabcamera >>>>>>>>>>>>>>>>>>>>",rotated.Cols(),rotated.Rows(),time.Since(start))
+		}
 		//debug( fmt.Sprintf("grab %s %d %d %d",time.Since(start),rotated.Cols(),rotated.Rows() , os.Getpid() ) )
 
 		// Videooutput

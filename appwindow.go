@@ -107,8 +107,9 @@ func grabVideoImage() {
 			outputImage.Image = image
 			outputImage.Refresh()
 			
-			fmt.Println("grabVideoImage time",time.Since(start))
-
+			if false {
+				fmt.Println("grabVideoImage time",time.Since(start))
+			}
 			
 			mat.Close()
 		}

@@ -58,6 +58,7 @@ func sumMarks(checkMarkList []CheckMarkList, processResult TesseractReturnType) 
 	return checkMarkList
 }
 
+
 func processRoisChannel() {
 	var circleSize int=100
 	var minDist float64=1000
