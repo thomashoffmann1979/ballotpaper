@@ -102,11 +102,13 @@ func grabVideoImage() {
 		mat,ok := <-cameraChannelImage
 		if ok {
 
+
 			start := time.Now()
-			image := matToImage(mat)
-			outputImage.Image = image
-			outputImage.Refresh()
-			
+			if false {
+				image := matToImage(mat)
+				outputImage.Image = image
+				outputImage.Refresh()
+			}
 			if false {
 				fmt.Println("grabVideoImage time",time.Since(start))
 			}
