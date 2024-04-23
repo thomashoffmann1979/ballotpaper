@@ -11,7 +11,10 @@ var intTestCamera int
 var forcedTestCameraWidth int
 var forcedTestCameraHeight int
 
+
+//var wnd gocv.Window
 func main(){
+
 	flag.IntVar(&intTestCamera, "camera", 0 , "camera")
 	flag.IntVar(&forcedTestCameraWidth, "width", 0 , "width")
 	flag.IntVar(&forcedTestCameraHeight, "height", 0 , "height")

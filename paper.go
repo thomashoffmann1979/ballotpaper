@@ -13,6 +13,8 @@ var pixelScaleY	float64 = 1
 
 func processPaperChannelImage() {
 
+	
+
 	for range grabVideoCameraTicker.C {	
 		img,ok := <-paperChannelImage
 		// fmt.Println("got image",paper,ok,paper.Size())
@@ -73,13 +75,17 @@ func processPaperChannelImage() {
 					drawContours.Close()
 
 				}
-					
+				
+				
 				if len(imageChannelPaper)==cap(imageChannelPaper) {
 					mat,_:=<-imageChannelPaper
 					mat.Close()
 				}
 				cloned := img.Clone()
 				imageChannelPaper <- cloned
+				
+
+				// paperWindow.IMShow(paper)
 
 				img.Close()
 			}

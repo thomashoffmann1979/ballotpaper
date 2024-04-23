@@ -65,7 +65,11 @@ type DocumentConfigurations []struct {
 	Rois []DocumentConfigurationPageRoi `json:"rois"`
 }
 
+
+
+
 func main() {
+
 
 	flag.StringVar(&strType, "type", "app" , "detect type of image")
 	flag.StringVar(&strInputFile, "input", "" , "input file")
