@@ -484,21 +484,20 @@ func makeOuterBorder() fyne.CanvasObject {
 			videoIsRunning = false
 			runVideo = false
 		} else {
+			fmt.Println("id",os.Getpid())
 			runVideo = true
 			videoIsRunning = true
 			//go grabcamera() 
 			grabVideoCameraTicker = time.NewTicker(1 * time.Millisecond)
-			go grabDebugs()
-
-			fmt.Println("id",os.Getpid())
-
 			
+			// go grabDebugs()
+			go grabcamera()  // Kamerabild abrufen
+			go grabVideoImage() // kamera bild anzeigen
 
-			
-			go grabVideoImage() 
-			go grabcamera() 
+			go processImage() // Bild verarbeiten
 
-			//if false {
+
+			if false {
 				go grabPaperImage()
 				go grabChannelBarcodes()
 				go grabCircleImage()
@@ -513,7 +512,7 @@ func makeOuterBorder() fyne.CanvasObject {
 				
 				go grabCurrentBox()
 				go grabCurrentStack()
-			//}
+			}
 		}
 		
 	})

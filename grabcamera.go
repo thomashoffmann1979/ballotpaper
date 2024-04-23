@@ -59,7 +59,7 @@ func grabcamera( ) {
 //	webcam.Set(gocv.VideoCaptureFrameWidth, 1280*1)
 //	webcam.Set(gocv.VideoCaptureFrameHeight, 720*1)
 //	4608 3456
-debug(fmt.Sprintf("Start grab camera %d ",forcedCameraWidth))
+	debug(fmt.Sprintf("Start grab camera %d ",forcedCameraWidth))
 
 	if forcedCameraWidth > 0 {
 		webcam.Set(gocv.VideoCaptureFrameWidth, float64(forcedCameraWidth))
@@ -108,7 +108,7 @@ debug(fmt.Sprintf("Start grab camera %d ",forcedCameraWidth))
 		}
 		paperCloned := rotated.Clone()
 		paperChannelImage <- paperCloned
-
 		rotated.Close()
+		
 	}
 }
