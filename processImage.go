@@ -41,7 +41,9 @@ func findBarcodes(scanner *barcode.ImageScanner, img gocv.Mat)[]BarcodeSymbol{
 	
 	for _, s := range symbols {
 		syms = append(syms,BarcodeSymbol{Type:s.Type.Name(),Data:s.Data,Quality:s.Quality,Boundary:s.Boundary})
-		log.Println("BarcodeSymbol",s.Type.Name(),s.Data,s.Quality,s.Boundary)
+		if false {
+			log.Println("BarcodeSymbol",s.Type.Name(),s.Data,s.Quality,s.Boundary)
+		}
 	}
 	smaller.Close()
 	return syms
@@ -85,7 +87,9 @@ func processRegionsOfInterest(tr TesseractReturnType,img gocv.Mat, useRoi int) T
 			
 			if tr.PageRois[pRoiIndex].ExcpectedMarks==len(marks) {
 				tr.IsCorrect=true
-				log.Println("marks: ", marks)
+				if false {
+					log.Println("marks: ", marks)
+				}
 			}
 
 			/*
