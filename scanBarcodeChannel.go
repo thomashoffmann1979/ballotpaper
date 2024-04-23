@@ -51,6 +51,15 @@ func processBarcodeSymbol(barcodeSymbol *barcode.Symbol ) {
 	}
 }
 
+/*
+func scanBarcodeChannelZXing() {
+	// prepare BinaryBitmap
+	bmp, _ := gozxing.NewBinaryBitmapFromImage(img)
+
+	// decode image
+	qrReader := qrcode.NewQRCodeReader()
+	result, _ := qrReader.Decode(bmp, nil)
+}*/
 func scanBarcodeChannel() {
 	
 

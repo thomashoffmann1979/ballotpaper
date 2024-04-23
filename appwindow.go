@@ -158,10 +158,10 @@ func grabReadyToSaveImage() {
 		mat,ok := <-readyToSaveChannelImage
 		if ok {
 			if readyToSave {
-				fileName := fmt.Sprintf("outimages/%s.jpg", ballotLabelWidget.Text)
+				//fileName := fmt.Sprintf("outimages/%s.jpg", ballotLabelWidget.Text)
 				// ballotLabelWidget.GetText()
-				gocv.IMWrite(fileName, mat)
-				log.Println("readyToSave")
+				//gocv.IMWrite(fileName, mat)
+				log.Println("readyToSave") // MatProfile %d",gocv.MatProfile.Count())
 			}
 			mat.Close()
 		}
@@ -498,7 +498,7 @@ func makeOuterBorder() fyne.CanvasObject {
 			go grabVideoImage() 
 			go grabcamera() 
 
-			if false {
+			//if false {
 				go grabPaperImage()
 				go grabChannelBarcodes()
 				go grabCircleImage()
@@ -513,7 +513,7 @@ func makeOuterBorder() fyne.CanvasObject {
 				
 				go grabCurrentBox()
 				go grabCurrentStack()
-			}
+			//}
 		}
 		
 	})
