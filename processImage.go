@@ -201,7 +201,7 @@ func processImage(){
 										
 										res := processRegionsOfInterest(lastTesseractResult,paper,0)
 										if res.IsCorrect {
-											log.Println("IsCorrect",res)
+											// log.Println("IsCorrect",res)
 											lastTesseractResult=res
 											for i := 0; i < len(res.Marks); i++ {
 												if i >= len(checkMarkList) {
