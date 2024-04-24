@@ -6,6 +6,7 @@ import (
 	"image"
 	"time"
 	"github.com/bieber/barcode"
+	"fmt"
 )
 
 
@@ -199,16 +200,16 @@ func processImage(){
 											lastTesseractResult = result
 											doFindCircles = true
 											checkMarkList = []CheckMarkList{}
-											log.Println("lastTesseractResult",lastTesseractResult.Title)
+											fmt.Println("lastTesseractResult",lastTesseractResult.Title)
 
 										}else{
-											log.Println("tesseract no bp found")
+											fmt.Println("tesseract no bp found")
 										}
 									}
 
 									if doFindCircles {
 
-										log.Println("doFindCircles")
+										fmt.Println("doFindCircles")
 										res := processRegionsOfInterest(lastTesseractResult,paper,0)
 										if res.IsCorrect {
 											// log.Println("IsCorrect",res)
@@ -225,7 +226,7 @@ func processImage(){
 												checkMarkList[i].Checked = checkMarkList[i].AVG > sumMarksAVG
 											}
 
-											log.Println("x")
+											fmt.Println("x")
 											if len(checkMarkList)>0 && checkMarkList[0].Count>5 {
 												//
 
@@ -239,7 +240,7 @@ func processImage(){
 													}
 												}	
 												res.Barcode = lastBarcode
-												log.Printf("Box: %s, Stack: %s, Barcode: %s, Title: %s, List: %v",res.BoxBarcode,res.StackBarcode, res.Barcode , lastTesseractResult.Title, outList)
+												fmt.Printf("Box: %s, Stack: %s, Barcode: %s, Title: %s, List: %v",res.BoxBarcode,res.StackBarcode, res.Barcode , lastTesseractResult.Title, outList)
 												//checkMarkList = sumMarks(checkMarkList, res)
 
 												doFindCircles = false
