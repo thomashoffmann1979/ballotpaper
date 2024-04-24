@@ -80,9 +80,11 @@ func processRegionsOfInterest(tr TesseractReturnType,img gocv.Mat, useRoi int) T
 		if !croppedMat.Empty() {
 			marks:=findCircles(croppedMat, circleSize,minDist )
 			tr.Marks=marks
+			/*
 			tr.BoxBarcode= boxLabelWidget.Text
 			tr.StackBarcode= stackLabelWidget.Text
 			tr.Barcode= ballotLabelWidget.Text
+			*/
 			
 			
 			if tr.PageRois[pRoiIndex].ExcpectedMarks==len(marks) {
@@ -187,6 +189,7 @@ func processImage(){
 										log.Println("code",code)
 										tesseractNeeded = true
 										doFindCircles = false
+										checkMarkList = []CheckMarkList{}
 									}
 
 									if tesseractNeeded {
@@ -196,6 +199,7 @@ func processImage(){
 											lastTesseractResult = result
 											doFindCircles = true
 											checkMarkList = []CheckMarkList{}
+											log.Println("lastTesseractResult",lastTesseractResult.Title)
 
 										}
 									}
@@ -206,7 +210,7 @@ func processImage(){
 										res := processRegionsOfInterest(lastTesseractResult,paper,0)
 										if res.IsCorrect {
 											// log.Println("IsCorrect",res)
-											lastTesseractResult=res
+											//lastTesseractResult=res
 											for i := 0; i < len(res.Marks); i++ {
 												if i >= len(checkMarkList) {
 													checkMarkList = append(checkMarkList, CheckMarkList{})
@@ -219,12 +223,29 @@ func processImage(){
 												checkMarkList[i].Checked = checkMarkList[i].AVG > sumMarksAVG
 											}
 
+											log.Println("x")
+											if len(checkMarkList)>0 && checkMarkList[0].Count>5 {
+												//
+
+												outList:=[]string{}
+												for i := 0; i < len(checkMarkList); i++ {
+													
+													if checkMarkList[i].Checked {
+														outList = append(outList, "😎")
+													} else {
+														outList = append(outList, "🥶")
+													}
+												}	
+												res.Barcode = lastBarcode
+												log.Printf("Box: %s, Stack: %s, Barcode: %s, Title: %s, List: %v",res.BoxBarcode,res.StackBarcode, res.Barcode , lastTesseractResult.Title, outList)
+												//checkMarkList = sumMarks(checkMarkList, res)
+
+												doFindCircles = false
+											}
+
 										}
 
-										if len(checkMarkList)>0 && checkMarkList[0].Count>15 {
-											doFindCircles = false
-											log.Printf("Box: %s, Stack: %s, Barcode: %s, Title: %s, Marks: %v",lastTesseractResult.BoxBarcode,lastTesseractResult.StackBarcode, lastTesseractResult.Barcode , lastTesseractResult.Title, checkMarkList)
-										}
+										
 
 										/*
 										marks:=findCircles(croppedMat, circleSize,minDist )
@@ -237,7 +258,7 @@ func processImage(){
 										}
 										*/
 									}else{
-										// log.Println("____OLD_MARKS",lastTesseractResult.Marks)
+										 // log.Println("old")
 									}
 									//log.Println("code use tesseract",code.Data,tesseractNeeded,lastTesseractResult)
 								}

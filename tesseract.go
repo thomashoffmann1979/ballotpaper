@@ -53,7 +53,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		result.CircleSize=documentConfigurations[i].CircleSize
 		result.CircleMinDistance=documentConfigurations[i].CircleMinDistance
 		result.Pagesize=documentConfigurations[i].Pagesize
-		result.PageRois=documentConfigurations[i].Rois
+		
 
 
 		X := documentConfigurations[i].TitleRegion.X * img.Cols() / result.Pagesize.Width
@@ -86,12 +86,14 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 			croppedMat.Close()
 			return result
 		}else{
-			if false {
-				fmt.Println(out[0].Word)
+			if true {
+				for j := 0; j < len(out); j++ {
+					fmt.Println(i,out[j].Word)
+				}
 			}
 			for j := 0; j < len(documentConfigurations[i].Titles); j++ {
 				distance := levenshtein.ComputeDistance(out[0].Word, documentConfigurations[i].Titles[j])
-				if false {
+				if true {
 					fmt.Printf("The distance between %s and %s is %d %d.\n", out[0].Word, documentConfigurations[i].Titles[j], len( documentConfigurations[i].Titles[j]), distance)
 				}
 				if distance < 3 {
@@ -109,6 +111,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 
 					debug( fmt.Sprintf("ocr %s %d %d %d",time.Since(start),croppedMat.Cols(),croppedMat.Rows(), os.Getpid() ) )
 
+					result.PageRois=documentConfigurations[i].Rois
 					croppedMat.Close()
 					drawContours.Close()
 					smaller.Close()

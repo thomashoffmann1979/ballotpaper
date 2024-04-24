@@ -31,3 +31,4 @@ var forcedCameraHeight int = -1
 var barcodeScale int = 1
 var tesseractScale int = 1
 
+var showOpenCVWindow bool = false
