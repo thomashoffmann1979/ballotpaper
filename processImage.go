@@ -202,7 +202,7 @@ func processImage(){
 											log.Println("lastTesseractResult",lastTesseractResult.Title)
 
 										}else{
-											log.Println("tesseract no bp foun")
+											log.Println("tesseract no bp found")
 										}
 									}
 
