@@ -95,7 +95,7 @@ func matToImage(mat gocv.Mat) image.Image {
 	return img
 }
 
-var window *gocv.Window
+//var window *gocv.Window
 
 
 func grabVideoImage() {
@@ -717,7 +717,7 @@ func makeLoginFormTab() fyne.CanvasObject {
 
 func appwindow() {
 
-	window = gocv.NewWindow("IMG")
+	//window = gocv.NewWindow("IMG")
 		
 
 	a := app.NewWithID("io.tualo.ballotscanner")
