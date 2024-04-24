@@ -105,11 +105,8 @@ func grabVideoImage() {
 
 
 			start := time.Now()
-			/*
-			window.IMShow(mat)
-			window.WaitKey(1)
-			*/
-			if true {
+			
+			if showOutputImage {
 				image := matToImage(mat)
 				outputImage.Image = image
 				outputImage.Refresh()
@@ -181,9 +178,11 @@ func grabPaperImage() {
 		mat,ok := <-imageChannelPaper
 		if ok {
 
-			image := matToImage(mat)
-			paperImage.Image = image
-			paperImage.Refresh()
+			if showPaperImage {
+				image := matToImage(mat)
+				paperImage.Image = image
+				paperImage.Refresh()
+			}
 			mat.Close()
 
 
@@ -195,9 +194,11 @@ func grabCircleImage() {
 	for range grabVideoCameraTicker.C {
 		mat,ok := <-imageChannelCircle
 		if ok {
-			image := matToImage(mat)
-			circleImage.Image = image
-			circleImage.Refresh()
+			if showCirlceImage {
+				image := matToImage(mat)
+				circleImage.Image = image
+				circleImage.Refresh()
+			}
 			mat.Close()
 		}
     }
@@ -503,12 +504,12 @@ func makeOuterBorder() fyne.CanvasObject {
 			go grabVideoImage() // kamera bild anzeigen
 
 			go processImage() // Bild verarbeiten
+			go grabPaperImage()
+			go grabCircleImage()
 
 
 			if false {
-				go grabPaperImage()
 				go grabChannelBarcodes()
-				go grabCircleImage()
 				go grabReadyToSaveImage()
 
 

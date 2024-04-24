@@ -4,6 +4,7 @@ import (
 	"log"
 	"gocv.io/x/gocv"
 	"image"
+	"image/color"
 	"time"
 	"github.com/bieber/barcode"
 	"fmt"
@@ -138,7 +139,8 @@ func processImage(){
 	lastBarcode := "wlekfjwuqezgzw"
 	doFindCircles := false
 	checkMarkList := []CheckMarkList{}
-
+	green := 0
+	red := 0
 	for {
 		if !runVideo {
 			break
@@ -169,12 +171,16 @@ func processImage(){
 				}
 
 				paper := extractPaper(img, contour, bottomRightCorner.X-topLeftCorner.X, bottomRightCorner.Y-topLeftCorner.Y, cornerPoints)
-				
+				green = 0
+				red = 255
 				if paper.Empty() {
 					contour.Close()
 					img.Close()
 					continue
 				}
+
+				
+
 				// mean := paper.Mean()
 				// if (mean.Val1+mean.Val2+mean.Val3)/3 > 150 {
 					area := float64(paper.Size()[0]) * float64(paper.Size()[1]) / float64(img.Size()[0]) / float64(img.Size()[1])
@@ -244,6 +250,11 @@ func processImage(){
 												//checkMarkList = sumMarks(checkMarkList, res)
 
 												doFindCircles = false
+
+
+												green = 255
+												red = 0
+
 											}
 
 										}
@@ -271,6 +282,21 @@ func processImage(){
 
 					}
 				// }
+
+								
+
+				drawContours := gocv.NewPointsVector()
+				drawContours.Append(contour)
+				gocv.DrawContours(&paper, drawContours, -1, color.RGBA{uint8(red), uint8(green), 0, 120}, int(8.0*pixelScale))
+				drawContours.Close()
+
+				if len(imageChannelPaper)==cap(imageChannelPaper) {
+					mat,_:=<-imageChannelPaper
+					mat.Close()
+				}
+				cloned := paper.Clone()
+				imageChannelPaper <- cloned
+
 				contour.Close()
 				paper.Close()
 			}
