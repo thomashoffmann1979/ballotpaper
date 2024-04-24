@@ -105,6 +105,8 @@ func grabVideoImage() {
 
 
 			start := time.Now()
+			window.IMShow(mat)
+			window.WaitKey(1)
 			if false {
 				image := matToImage(mat)
 				outputImage.Image = image
