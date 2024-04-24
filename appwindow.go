@@ -109,7 +109,7 @@ func grabVideoImage() {
 			window.IMShow(mat)
 			window.WaitKey(1)
 			*/
-			if false {
+			if true {
 				image := matToImage(mat)
 				outputImage.Image = image
 				outputImage.Refresh()
