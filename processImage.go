@@ -8,6 +8,9 @@ import (
 	"time"
 	"github.com/bieber/barcode"
 	"fmt"
+	api "tualo.de/ballotpaper/api"
+	"strings"
+	"encoding/json"
 )
 
 
@@ -57,8 +60,8 @@ func processRegionsOfInterest(tr TesseractReturnType,img gocv.Mat, useRoi int) T
 	
 
 						
-	pixelScale :=  float64(img.Cols()) /  float64(tr.Pagesize.Width)
-	pixelScaleY :=  float64(img.Rows()) /  float64(tr.Pagesize.Height)
+	pixelScale =  float64(img.Cols()) /  float64(tr.Pagesize.Width)
+	pixelScaleY =  float64(img.Rows()) /  float64(tr.Pagesize.Height)
 
 	if pixelScale==0 {
 		pixelScale=1
@@ -91,6 +94,7 @@ func processRegionsOfInterest(tr TesseractReturnType,img gocv.Mat, useRoi int) T
 			
 			if tr.PageRois[pRoiIndex].ExcpectedMarks==len(marks) {
 				tr.IsCorrect=true
+
 				if false {
 					log.Println("marks: ", marks)
 				}
@@ -141,6 +145,7 @@ func processImage(){
 	checkMarkList := []CheckMarkList{}
 	green := 0
 	red := 0
+	blue := 0
 	for {
 		if !runVideo {
 			break
@@ -155,6 +160,10 @@ func processImage(){
 			if false {
 				log.Println("got image",ok,img.Size(),len(paperChannelImage))
 			}
+
+			green = 0
+			red = 0
+			blue = 0
 
 			if !img.Empty() {
 				contour := findPaperContour(img)
@@ -171,9 +180,9 @@ func processImage(){
 				}
 
 				paper := extractPaper(img, contour, bottomRightCorner.X-topLeftCorner.X, bottomRightCorner.Y-topLeftCorner.Y, cornerPoints)
-				green = 0
-				red = 255
+				
 				if paper.Empty() {
+
 					contour.Close()
 					img.Close()
 					continue
@@ -197,6 +206,10 @@ func processImage(){
 										tesseractNeeded = true
 										doFindCircles = false
 										checkMarkList = []CheckMarkList{}
+
+										green = 0
+										red = 0
+										blue = 255
 									}
 
 									if tesseractNeeded {
@@ -207,57 +220,106 @@ func processImage(){
 											doFindCircles = true
 											checkMarkList = []CheckMarkList{}
 											fmt.Println("lastTesseractResult",lastTesseractResult.Title)
+											green = 255
+											red = 255
+											blue = 255
 
 										}else{
+											green = 100
+											red = 255
+											blue = 100
 											fmt.Println("tesseract no bp found")
 										}
 									}
 
 									if doFindCircles {
 
-										fmt.Println("doFindCircles")
-										res := processRegionsOfInterest(lastTesseractResult,paper,0)
-										if res.IsCorrect {
-											// log.Println("IsCorrect",res)
-											//lastTesseractResult=res
-											for i := 0; i < len(res.Marks); i++ {
-												if i >= len(checkMarkList) {
-													checkMarkList = append(checkMarkList, CheckMarkList{})
-												}
-												if res.Marks[i] {
-													checkMarkList[i].Sum += 1
-												}
-												checkMarkList[i].Count++
-												checkMarkList[i].AVG = float64(checkMarkList[i].Sum) / float64(checkMarkList[i].Count)
-												checkMarkList[i].Checked = checkMarkList[i].AVG > sumMarksAVG
+
+										for pRoiIndex := 0; pRoiIndex < len(lastTesseractResult.PageRois); pRoiIndex++ {
+											titles := []string{}
+				
+											for i := 0; i < len(lastTesseractResult.PageRois[pRoiIndex].Types); i++ {
+												titles = append(titles, lastTesseractResult.PageRois[pRoiIndex].Types[i].Title)
 											}
+											foundIndex := IndexOf(titles, lastTesseractResult.Title)
+											if (foundIndex>-1) {
 
-											fmt.Println("x")
-											if len(checkMarkList)>0 && checkMarkList[0].Count>5 {
-												//
+												res := processRegionsOfInterest(lastTesseractResult,paper,pRoiIndex)
 
-												outList:=[]string{}
-												for i := 0; i < len(checkMarkList); i++ {
-													
-													if checkMarkList[i].Checked {
-														outList = append(outList, "X")
-													} else {
-														outList = append(outList, "O")
-													}
-												}	
-												res.Barcode = lastBarcode
-												fmt.Printf("Box: %s, Stack: %s, Barcode: %s, Title: %s, List: %v",res.BoxBarcode,res.StackBarcode, res.Barcode , lastTesseractResult.Title, outList)
-												//checkMarkList = sumMarks(checkMarkList, res)
-
-												doFindCircles = false
-
-
+												log.Println("res.Marks",res.Marks)
+												log.Println("res.Id",lastTesseractResult.PageRois[pRoiIndex].Types[foundIndex].Id)
 												green = 255
 												red = 0
+												blue = 255
 
+
+												if res.IsCorrect {
+													// log.Println("IsCorrect",res)
+													//lastTesseractResult=res
+													for i := 0; i < len(res.Marks); i++ {
+														if i >= len(checkMarkList) {
+															checkMarkList = append(checkMarkList, CheckMarkList{})
+														}
+														if res.Marks[i] {
+															checkMarkList[i].Sum += 1
+														}
+														checkMarkList[i].Count++
+														checkMarkList[i].AVG = float64(checkMarkList[i].Sum) / float64(checkMarkList[i].Count)
+														checkMarkList[i].Checked = checkMarkList[i].AVG > sumMarksAVG
+													}
+
+													if len(checkMarkList)>0 && checkMarkList[0].Count>10 {
+														//
+
+														outList:=[]string{}
+														for i := 0; i < len(checkMarkList); i++ {
+															
+															if checkMarkList[i].Checked {
+																outList = append(outList, "X")
+															} else {
+																outList = append(outList, "O")
+															}
+														}	
+														res.Barcode = lastBarcode
+														fmt.Printf("Box: %s, Stack: %s, Barcode: %s, Title: %s, List: %v \n",res.BoxBarcode,res.StackBarcode, res.Barcode , lastTesseractResult.Title, outList)
+														//checkMarkList = sumMarks(checkMarkList, res)
+														b := new(strings.Builder)
+														json.NewEncoder(b).Encode(outList)
+
+														res,err := api.SendReading(
+															res.BoxBarcode,
+															res.StackBarcode,
+															res.Barcode,
+															lastTesseractResult.PageRois[pRoiIndex].Types[foundIndex].Id,
+															b.String(),
+														)
+														
+														if err != nil {
+															log.Println("SendReading ERROR",err)
+															green = 0
+															red = 255
+															blue = 0
+														}else{
+															log.Println(">>>>",res.Msg)
+															if res.Success {
+																doFindCircles = false
+
+
+																green = 150
+																red = 0
+																blue = 50
+															}else{
+																log.Println("SendReading ERROR",res.Msg)
+															}
+														}
+
+													}
+												}
 											}
-
 										}
+				
+
+										
 
 										
 
@@ -272,7 +334,9 @@ func processImage(){
 										}
 										*/
 									}else{
-										 // log.Println("old")
+										green = 150
+										red = 0
+										blue = 50
 									}
 									//log.Println("code use tesseract",code.Data,tesseractNeeded,lastTesseractResult)
 								}
@@ -280,21 +344,24 @@ func processImage(){
 							// gocv.IMWrite("paper.png",paper)
 						}
 
-					}
-				// }
+					}else{
+						green = 0
+						red = 0
+						blue = 0
+				 	}
 
 								
 
 				drawContours := gocv.NewPointsVector()
 				drawContours.Append(contour)
-				gocv.DrawContours(&paper, drawContours, -1, color.RGBA{uint8(red), uint8(green), 0, 120}, int(8.0*pixelScale))
+				gocv.DrawContours(&img, drawContours, -1, color.RGBA{uint8(red), uint8(green), uint8(blue), 120}, int(8.0*pixelScale))
 				drawContours.Close()
 
 				if len(imageChannelPaper)==cap(imageChannelPaper) {
 					mat,_:=<-imageChannelPaper
 					mat.Close()
 				}
-				cloned := paper.Clone()
+				cloned := img.Clone()
 				imageChannelPaper <- cloned
 
 				contour.Close()

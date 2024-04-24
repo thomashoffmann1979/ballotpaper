@@ -1,8 +1,8 @@
 Website = "https://tualo.de"
 
 [Details]
-Icon = "Icon.png"
-Name = "MyApp"
-ID = "io.tualo.ballotpaper"
-Version = "1.0.0"
-Build = 1
+  Icon = "Icon.png"
+  Name = "MyApp"
+  ID = "io.tualo.ballotpaper"
+  Version = "1.0.0"
+  Build = 2

@@ -48,7 +48,11 @@ type DocumentConfigurationPageRoi struct {
 	Width  int `json:"width"`
 	Height int `json:"height"`
 	ExcpectedMarks int `json:"excpectedMarks"`
-	Titles       []string `json:"titles"`
+	Types	[]struct{
+		Title string `json:"title"`
+		Id string `json:"id"`
+	} `json:"types"`
+	
 }
 
 type DocumentConfigurations []struct {
@@ -66,7 +70,7 @@ type DocumentConfigurations []struct {
 }
 
 
-
+var logGrabcamera = false
 
 func main() {
 
@@ -94,6 +98,8 @@ func main() {
 
 	flag.IntVar(&barcodeScale, "barcodeScale",1 , "barcode scale factor")
 	flag.IntVar(&tesseractScale, "tesseractScale",1 , "tesseract scale factor")
+
+	flag.BoolVar(&logGrabcamera, "logGrabcamera", false, "show logGrabcamera")
 
 	flag.Parse()
 

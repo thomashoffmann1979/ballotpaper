@@ -18,6 +18,8 @@ var Jar *cookiejar.Jar
 
 var timeout = time.Duration(10 * time.Second)
 
+var systemURL = "http://localhost:8080/"
+
 func dialTimeout(network, addr string) (net.Conn, error) {
 	return net.DialTimeout(network, addr, timeout)
 }
@@ -31,6 +33,9 @@ func InitJar() {
 		Jar = jar
 		fmt.Println("Jar initialized")
 	}
+}
+func SetSystemURL(url string) {
+	systemURL = url
 }
 
 func Get(url string) (string, error) {
@@ -68,6 +73,11 @@ func Post(url string, data string) (string, error) {
 	resp, err = client.Post(url,
 		"application/x-www-form-urlencoded",
 		strings.NewReader(data))
+	if err != nil {
+		log.Println("Post ERROR",err)
+		return "", err
+	}
+
 	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
@@ -83,17 +93,29 @@ func Login(url string, username string, password string) (LoginResponse, error) 
 }
 
 
-func Ping(url string) (PingResponse, error) {
+func Ping( ) (PingResponse, error) {
 	var response PingResponse
-	sb,err := Get(url+"dashboard/ping")
+	sb,err := Get(systemURL+"dashboard/ping")
 	json.Unmarshal([]byte(sb), &response)
 	return response, err
 }
 
 
-func GetKandidaten(url string) (KandidatenResponse, error) {
+func GetKandidaten( ) (KandidatenResponse, error) {
 	var response KandidatenResponse
-	sb,err := Get(url+"ds/kandidaten/read")
+	sb,err := Get(systemURL+"ds/kandidaten/read")
 	json.Unmarshal([]byte(sb), &response)
+	return response, err
+}
+
+
+func SendReading( boxbarcode string, stackbarcode string, barcode string, id string, marks string) (KandidatenResponse, error) {
+	var response KandidatenResponse
+	data := "boxbarcode="+boxbarcode+"&stackbarcode="+stackbarcode+"&barcode="+barcode+"&id="+id+"&marks="+marks
+	log.Println("SendReading",data)
+	sb,err := Post(systemURL+"papervote/opticaldata",data)
+	json.Unmarshal([]byte(sb), &response)
+	
+	
 	return response, err
 }

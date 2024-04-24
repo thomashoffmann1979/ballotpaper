@@ -1,6 +1,7 @@
 ballotpaper
 *.jpg
 *.png
+*.app
 fyne-cross
 ios
 ballotpaper.exe

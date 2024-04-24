@@ -73,7 +73,12 @@ func processRoisChannel() {
 				if false {
 					log.Printf("Title: %s", roisReturn.tesseractReturn.Title)
 				}
-				if (IndexOf(roisReturn.tesseractReturn.PageRois[pRoiIndex].Titles, roisReturn.tesseractReturn.Title)>-1) {
+				titles := []string{}
+				for i := 0; i < len(roisReturn.tesseractReturn.PageRois[pRoiIndex].Types); i++ {
+					titles = append(titles, roisReturn.tesseractReturn.PageRois[pRoiIndex].Types[i].Title)
+				}
+				foundIndex := IndexOf(titles, roisReturn.tesseractReturn.Title)
+				if (foundIndex>-1) {
 						
 					pixelScale =  float64(roisReturn.mat.Cols()) /  float64(roisReturn.tesseractReturn.Pagesize.Width)
 					pixelScaleY =  float64(roisReturn.mat.Rows()) /  float64(roisReturn.tesseractReturn.Pagesize.Height)

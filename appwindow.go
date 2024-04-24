@@ -95,7 +95,8 @@ func matToImage(mat gocv.Mat) image.Image {
 	return img
 }
 
-//var window *gocv.Window
+
+
 
 
 func grabVideoImage() {
@@ -191,10 +192,14 @@ func grabPaperImage() {
 }
 
 func grabCircleImage() {
-	for range grabVideoCameraTicker.C {
+	for {
+		if !runVideo {
+			return
+		}
+		log.Println("grabCircleImage",len(imageChannelCircle),showCirlceImage)
 		mat,ok := <-imageChannelCircle
 		if ok {
-			if showCirlceImage {
+			if true {
 				image := matToImage(mat)
 				circleImage.Image = image
 				circleImage.Refresh()
@@ -499,6 +504,7 @@ func makeOuterBorder() fyne.CanvasObject {
 			//go grabcamera() 
 			grabVideoCameraTicker = time.NewTicker(1 * time.Millisecond)
 			
+			
 			// go grabDebugs()
 			go grabcamera()  // Kamerabild abrufen
 			go grabVideoImage() // kamera bild anzeigen
@@ -615,8 +621,8 @@ func makeMainPanel() fyne.CanvasObject {
 		loginContainer,
 		mainAppContainer,
 	)
-	loginContainer.Hide()
-					mainAppContainer.Show()
+	loginContainer.Show()
+	mainAppContainer.Hide()
 	return content
 }
 
@@ -683,11 +689,12 @@ func makeLoginFormTab() fyne.CanvasObject {
 						Content: "Welcome " + loginResponse.Fullname,
 					})
 					*/
+					api.SetSystemURL(strUrl)
 
-					pingResponse, _ = api.Ping(strUrl)
+					pingResponse, _ = api.Ping()
 					fullNameWidget.SetText(loginResponse.Fullname)
 
-					kandidatenResponse, _ = api.GetKandidaten(strUrl)
+					kandidatenResponse, _ = api.GetKandidaten()
 					fmt.Println(kandidatenResponse)
 					loginContainer.Hide()
 					mainAppContainer.Show()

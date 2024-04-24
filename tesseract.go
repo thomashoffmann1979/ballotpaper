@@ -98,6 +98,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 				}
 				if distance < 3 {
 					result.Title=documentConfigurations[i].Titles[j]
+					
 					//title = out[0].Word
 					drawContours := gocv.NewPointsVector()
 					contour:= gocv.NewPointVectorFromPoints([]image.Point{

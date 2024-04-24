@@ -20,20 +20,35 @@
         "circleMinDistance": 22,
         "rois": [
             {
-                "titles": [
-                    "Energie",
-                    "Handelsvertretungen",
-                    "Hotel-"
+                "types": [
+                    {
+                        "title": "Energie",
+                        "id": "1"
+                    },
+                    {
+                        "title": "Handelsvertretungen",
+                        "id": "2"
+                    },
+                    {
+                        "title": "Hotel-",
+                        "id": "3"
+                    }
                 ],
+                
                 "x": 12,
                 "y": 28,
                 "width": 18,
                 "height": 45,
                 "excpectedMarks": 2
             },
+            
             {
-                "titles": [
-                    "Einzelhandel"
+                "types": [
+                    {
+                        "title": "Einzelhandel",
+                        "id": "4"
+                    }
+                    
                 ],
                 "x": 12,
                 "y": 28,
@@ -61,12 +76,13 @@
         "circleMinDistance": 9,
         "rois": [
             {
-                "titles": [
-                    "Handel"
+                "types": [
+                    {
+                        "title": "Handel",
+                        "id": "5"
+                    }
                 ],
-                "id": [
-                    "1"
-                ],
+
                 "x": 20,
                 "y": 81,
                 "width": 13,

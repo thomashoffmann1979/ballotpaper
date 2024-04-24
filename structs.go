@@ -11,6 +11,7 @@ type TesseractReturnType struct {
 	StackBarcode   string
 	Barcode   string
 	Title   string
+	Id string
 	IsCorrect bool
 	Marks   []bool
 	PageRois []DocumentConfigurationPageRoi
