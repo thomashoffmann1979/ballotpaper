@@ -86,7 +86,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 			croppedMat.Close()
 			return result
 		}else{
-			if true {
+			if false {
 				for j := 0; j < len(out); j++ {
 					fmt.Println(i,out[j].Word)
 				}
@@ -109,7 +109,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 					gocv.DrawContours(&croppedMat, drawContours, -1, color.RGBA{0, 255, 0, 0}, 2)
 					result.Point = image.Point{documentConfigurations[i].TitleRegion.X, documentConfigurations[i].TitleRegion.Y}
 
-					debug( fmt.Sprintf("ocr %s %d %d %d",time.Since(start),croppedMat.Cols(),croppedMat.Rows(), os.Getpid() ) )
+					//debug( fmt.Sprintf("ocr %s %d %d %d",time.Since(start),croppedMat.Cols(),croppedMat.Rows(), os.Getpid() ) )
 
 					result.PageRois=documentConfigurations[i].Rois
 					croppedMat.Close()
@@ -127,7 +127,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 		smaller.Close()
 	}
 	
-	debug( fmt.Sprintf("tesseract failed %s ",time.Since(start)) )
+	//debug( fmt.Sprintf("tesseract failed %s ",time.Since(start)) )
 	readyToSave = false
 
 	return result

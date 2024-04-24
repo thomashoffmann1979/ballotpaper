@@ -201,6 +201,8 @@ func processImage(){
 											checkMarkList = []CheckMarkList{}
 											log.Println("lastTesseractResult",lastTesseractResult.Title)
 
+										}else{
+											log.Println("tesseract no bp foun")
 										}
 									}
 
