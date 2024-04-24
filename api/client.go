@@ -109,10 +109,10 @@ func GetKandidaten( ) (KandidatenResponse, error) {
 }
 
 
-func SendReading( boxbarcode string, stackbarcode string, barcode string, id string, marks string) (KandidatenResponse, error) {
+func SendReading( boxbarcode string, stackbarcode string, barcode string, id string, marks string,image string) (KandidatenResponse, error) {
 	var response KandidatenResponse
-	data := "boxbarcode="+boxbarcode+"&stackbarcode="+stackbarcode+"&barcode="+barcode+"&id="+id+"&marks="+marks
-	log.Println("SendReading",data)
+	data := "boxbarcode="+boxbarcode+"&stackbarcode="+stackbarcode+"&barcode="+barcode+"&id="+id+"&marks="+marks+"&image="+image
+	// log.Println("SendReading",data)
 	sb,err := Post(systemURL+"papervote/opticaldata",data)
 	json.Unmarshal([]byte(sb), &response)
 	

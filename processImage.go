@@ -11,6 +11,8 @@ import (
 	api "tualo.de/ballotpaper/api"
 	"strings"
 	"encoding/json"
+
+	"encoding/base64"
 )
 
 
@@ -286,12 +288,18 @@ func processImage(){
 														b := new(strings.Builder)
 														json.NewEncoder(b).Encode(outList)
 
+														image_bytes, _ := gocv.IMEncode(gocv.JPEGFileExt, paper)
+														image_base64 := base64.StdEncoding.EncodeToString(image_bytes.GetBytes())
+														//fmt.Println("pic",image_base64[0:100])
+														image_bytes.Close()
+
 														res,err := api.SendReading(
 															res.BoxBarcode,
 															res.StackBarcode,
 															res.Barcode,
 															lastTesseractResult.PageRois[pRoiIndex].Types[foundIndex].Id,
 															b.String(),
+															"data:image/jpeg;base64,"+image_base64,
 														)
 														
 														if err != nil {
@@ -300,7 +308,7 @@ func processImage(){
 															red = 255
 															blue = 0
 														}else{
-															log.Println(">>>>",res.Msg)
+															// log.Println(">>>>",res.Msg)
 															if res.Success {
 																doFindCircles = false
 
