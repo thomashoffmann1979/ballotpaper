@@ -248,8 +248,8 @@ func processImage(){
 
 												res := processRegionsOfInterest(lastTesseractResult,paper,pRoiIndex)
 
-												log.Println("res.Marks",res.Marks)
-												log.Println("res.Id",lastTesseractResult.PageRois[pRoiIndex].Types[foundIndex].Id)
+												//	log.Println("res.Marks",res.Marks)
+												//	log.Println("res.Id",lastTesseractResult.PageRois[pRoiIndex].Types[foundIndex].Id)
 												green = 255
 												red = 0
 												blue = 255

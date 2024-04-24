@@ -196,7 +196,7 @@ func grabCircleImage() {
 		if !runVideo {
 			return
 		}
-		log.Println("grabCircleImage",len(imageChannelCircle),showCirlceImage)
+
 		mat,ok := <-imageChannelCircle
 		if ok {
 			if true {
