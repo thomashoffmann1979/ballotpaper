@@ -206,7 +206,7 @@ func processImage(){
 
 									if doFindCircles {
 
-										
+										log.Println("doFindCircles")
 										res := processRegionsOfInterest(lastTesseractResult,paper,0)
 										if res.IsCorrect {
 											// log.Println("IsCorrect",res)
@@ -231,9 +231,9 @@ func processImage(){
 												for i := 0; i < len(checkMarkList); i++ {
 													
 													if checkMarkList[i].Checked {
-														outList = append(outList, "😎")
+														outList = append(outList, "X")
 													} else {
-														outList = append(outList, "🥶")
+														outList = append(outList, "O")
 													}
 												}	
 												res.Barcode = lastBarcode

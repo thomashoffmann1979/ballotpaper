@@ -93,7 +93,7 @@ func tesseract(img gocv.Mat) (TesseractReturnType) {
 			}
 			for j := 0; j < len(documentConfigurations[i].Titles); j++ {
 				distance := levenshtein.ComputeDistance(out[0].Word, documentConfigurations[i].Titles[j])
-				if true {
+				if false {
 					fmt.Printf("The distance between %s and %s is %d %d.\n", out[0].Word, documentConfigurations[i].Titles[j], len( documentConfigurations[i].Titles[j]), distance)
 				}
 				if distance < 3 {
